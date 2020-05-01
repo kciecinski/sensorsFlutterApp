@@ -12,49 +12,74 @@ import android.content.Context
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity: FlutterActivity() {
-    private val CHANNEL = "samples.flutter.dev/gyroscope"
+    private val CHANNEL = "samples.flutter.dev/sensors"
     
-    val listener = GyroscopeListener();
+    val gyroListener = PositionAndMotionListener();
+    val accListener = PositionAndMotionListener();
+    val magneticListener = PositionAndMotionListener();
+    val lightListener = EnvirementalListener();
+
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         GeneratedPluginRegistrant.registerWith(flutterEngine)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler {
             call, result ->
-            if (call.method == "getGyroscopeValues") {
-                val gyroValues = getGyroscopeValues()
-        
-                if (gyroValues != {}) {
-                  result.success(gyroValues)
-                } else {
-                  result.error("UNAVAILABLE", "Gryoscope not available.", null)
-                }
-              } else {
-                result.notImplemented()
-              }    
-         }
+            when (call.method) {
+              "getGyroscopeValues" -> checkResultFor(getValuesFor(Sensor.TYPE_GYROSCOPE, gyroListener), result)
+              "getAccelerometrValues" -> checkResultFor(getValuesFor(Sensor.TYPE_ACCELEROMETER, accListener), result)
+              "getMagneticFieldValues" -> checkResultFor(getValuesFor(Sensor.TYPE_MAGNETIC_FIELD, magneticListener), result)
+              "getLightValues" -> checkResultFor(getValuesFor(Sensor.TYPE_LIGHT, lightListener), result)
+              else -> {
+                result.notImplemented();
+              }
+            }
+        }
     }
 
-    private fun getGyroscopeValues(): HashMap<String,Double> {
+    private fun checkResultFor(values: HashMap<String,Double>, result:MethodChannel.Result): Void? {
+      if (values != {}) {
+        result.success(values);
+      } else {
+        result.error("UNAVAILABLE", "Sensor not available.", null);
+      }
+      return null;
+    }
+
+    private fun getValuesFor(sensorType: Int,listener: BasicSensoreListener ): HashMap<String,Double> {
         val sensorManager =  getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        val sensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
+        val sensor: Sensor = sensorManager.getDefaultSensor(sensorType)
         sensorManager.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_NORMAL)
 
-        return listener.gyroValues;
+        return listener.values;
       }
 }
 
-class GyroscopeListener : SensorEventListener {
+class PositionAndMotionListener : BasicSensoreListener {
 
-    val gyroValues:HashMap<String,Double> = HashMap<String,Double>() 
-  
+    override val values:HashMap<String,Double> = HashMap<String,Double>() 
+
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
   
     }
     override fun onSensorChanged(event: SensorEvent?) {
         val sensorName: String = event?.sensor!!.getName();
-        gyroValues.put("x", event.values[0].toDouble());
-        gyroValues.put("y", event.values[1].toDouble());
-        gyroValues.put("z", event.values[2].toDouble());
-    }
-    
+        values.put("x", event.values[0].toDouble());
+        values.put("y", event.values[1].toDouble());
+        values.put("z", event.values[2].toDouble());
+    }   
+}
+
+class EnvirementalListener : BasicSensoreListener {
+
+  override val values:HashMap<String, Fixed> = HashMap<String,Double>() 
+
+  override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+  override fun onSensorChanged(event: SensorEvent?) {
+      val sensorName: String = event?.sensor!!.getName();
+      values.put("value", event.values[0].toDouble());
+  }
+}
+
+interface BasicSensoreListener: SensorEventListener {
+  val values:HashMap<String,Double>; 
 }
