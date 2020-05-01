@@ -71,7 +71,7 @@ class PositionAndMotionListener : BasicSensoreListener {
 
 class EnvirementalListener : BasicSensoreListener {
 
-  override val values:HashMap<String, Fixed> = HashMap<String,Double>() 
+  override val values:HashMap<String,Double> = HashMap<String,Double>() 
 
   override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
   override fun onSensorChanged(event: SensorEvent?) {
