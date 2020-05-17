@@ -16,58 +16,24 @@ import androidx.core.content.ContextCompat
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity: FlutterActivity() {
-    private val CHANNEL = "samples.flutter.dev/sensors"
+    private val SENSORS_CHANNEL = "samples.flutter.dev/sensors"
+    private val GPS_CHANNEL = "samples.flutter.dev/gps"
     
     val gyroListener = PositionAndMotionListener();
     val accListener = PositionAndMotionListener();
     val magneticListener = PositionAndMotionListener();
     val lightListener = EnvirementalListener();
 
-    val permissionRequestCode = 123
-    var neededPermissions = arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION)
     private lateinit var locationNMEAServiceIntent: Intent
 
-    override fun onStart() {
-        getPermissionsAndStart()
-        super.onStart()
-    }
-
-    fun getPermissionsAndStart() {
-        var askForPermissions: MutableList<String> = ArrayList<String>()
-        for(permission in neededPermissions) {
-            if (ContextCompat.checkSelfPermission(this@MainActivity,permission) == PackageManager.PERMISSION_DENIED) {
-                askForPermissions.add(permission)
-            }
-        }
-        if(!askForPermissions.isEmpty())
-            ActivityCompat.requestPermissions(this@MainActivity, askForPermissions.toTypedArray(), permissionRequestCode)
-        else
-            startWithPermissions()
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        var haveAllPermission = true
-        if (requestCode == permissionRequestCode){
-            for((index,permission) in permissions.withIndex()) {
-                if(neededPermissions.contains(permission) && grantResults[index] == PackageManager.PERMISSION_DENIED) {
-                    haveAllPermission = false
-                    break
-                }
-            }
-        }
-        if(haveAllPermission)
-            startWithPermissions()
-    }
-
-    private fun startWithPermissions() {
+    private fun startGpsService() {
         locationNMEAServiceIntent = Intent(this,LocationNMEAService::class.java)
         startService(locationNMEAServiceIntent)
     }
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         GeneratedPluginRegistrant.registerWith(flutterEngine)
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler {
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, SENSORS_CHANNEL).setMethodCallHandler {
             call, result ->
             when (call.method) {
               "getGyroscopeValues" -> checkResultFor(getValuesFor(Sensor.TYPE_GYROSCOPE, gyroListener), result)
@@ -77,6 +43,15 @@ class MainActivity: FlutterActivity() {
               else -> {
                 result.notImplemented();
               }
+            }
+        }
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, GPS_CHANNEL).setMethodCallHandler {
+            call, result ->
+            when(call.method) {
+                "startGps" -> startGpsService()
+                else -> {
+                    result.notImplemented();
+                }
             }
         }
     }

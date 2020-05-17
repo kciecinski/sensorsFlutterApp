@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:wbudy_apka/widgets/SensorDataDisplay.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -35,6 +38,19 @@ class _MyHomePageState extends State<MyHomePage> {
     {"Name": "Light", "Method": "getLightValues"}
   ];
 
+
+  @override
+  void initState() {
+    requestPermissionAndStartNMEAListening();
+  }
+
+  Future requestPermissionAndStartNMEAListening() async {
+    List<PermissionGroup> permissonsList = List.of({PermissionGroup.location,PermissionGroup.locationAlways,PermissionGroup.locationWhenInUse});
+    await PermissionHandler().requestPermissions(permissonsList);
+    const platform = const MethodChannel('samples.flutter.dev/gps');
+    platform.invokeMethod('startGps');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,4 +66,5 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
 }
