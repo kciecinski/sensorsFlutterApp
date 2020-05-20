@@ -1,19 +1,20 @@
 package com.example.wbudy_apka
 
-import androidx.annotation.NonNull;
-import io.flutter.embedding.android.FlutterActivity
-import io.flutter.embedding.engine.FlutterEngine
-import io.flutter.plugins.GeneratedPluginRegistrant
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import android.content.ServiceConnection
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
+import android.os.IBinder
+import androidx.annotation.NonNull
+import com.example.wbudy_apka.location.Position
+import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import io.flutter.plugins.GeneratedPluginRegistrant
 
 class MainActivity: FlutterActivity() {
     private val SENSORS_CHANNEL = "samples.flutter.dev/sensors"
@@ -25,10 +26,17 @@ class MainActivity: FlutterActivity() {
     val lightListener = EnvirementalListener();
 
     private lateinit var locationNMEAServiceIntent: Intent
-
-    private fun startGpsService() {
-        locationNMEAServiceIntent = Intent(this,LocationNMEAService::class.java)
-        startService(locationNMEAServiceIntent)
+    private lateinit var locationService: LocationService
+    private var locationServiceConnected: Boolean = false
+    private val locationServiceConnection: ServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            val binder: LocationService.LocationServiceBinder = service as LocationService.LocationServiceBinder
+            locationService = binder.service
+            locationServiceConnected = true
+        }
+        override fun onServiceDisconnected(arg0: ComponentName) {
+            locationServiceConnected = false
+        }
     }
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
@@ -49,11 +57,38 @@ class MainActivity: FlutterActivity() {
             call, result ->
             when(call.method) {
                 "startGps" -> startGpsService()
+                "isPositionAvailable" -> isPositionAvailable(getValuesFor(Sensor.TYPE_LIGHT, lightListener), result)
+                "getPosition" -> getPosition(getValuesFor(Sensor.TYPE_LIGHT, lightListener), result)
                 else -> {
                     result.notImplemented();
                 }
             }
         }
+    }
+
+    private fun startGpsService() {
+        locationNMEAServiceIntent = Intent(this,LocationService::class.java)
+        startService(locationNMEAServiceIntent)
+        bindService(locationNMEAServiceIntent,locationServiceConnection,Context.BIND_AUTO_CREATE)
+    }
+
+    private fun isPositionAvailable(values: HashMap<String,Double>, result:MethodChannel.Result) {
+        var returns: HashMap<String,Boolean> = HashMap<String,Boolean> ()
+        returns.put("isPositionAvailable",locationServiceConnected)
+        result.success(returns)
+    }
+
+    private fun getPosition(values: HashMap<String,Double>, result:MethodChannel.Result) {
+        var position = locationService.getLastPosition()
+        var positionHashMap: HashMap<String,String> = HashMap<String,String>()
+        positionHashMap.put("longtitude",position.longitude.toString())
+        positionHashMap.put("latitude",position.latitude.toString())
+        positionHashMap.put("time",position.datetime.toString())
+        if(position.availableAltitude)
+            positionHashMap.put("altitude",position.altitude.toString())
+        var returns: HashMap<String,HashMap<String,String>> = HashMap<String,HashMap<String,String>> ()
+        returns.put("getPosition",positionHashMap)
+        result.success(returns)
     }
 
     private fun checkResultFor(values: HashMap<String,Double>, result:MethodChannel.Result): Void? {

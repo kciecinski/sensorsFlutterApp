@@ -1,13 +1,15 @@
-package com.example.wbudy_apka
+package com.example.wbudy_apka.location
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.location.GpsStatus
+import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.location.GpsStatus.NmeaListener
+import androidx.core.app.ActivityCompat
 
 class NMEAListener(paramContext: Context) : NmeaListener, LocationListener {
     private var inmeaListener: NMEAEventListener? = null
@@ -17,7 +19,7 @@ class NMEAListener(paramContext: Context) : NmeaListener, LocationListener {
 
     override fun onLocationChanged(paramLocation: Location?) {}
     override fun onNmeaReceived(paramLong: Long, paramString: String?) {
-        if (inmeaListener != null) inmeaListener!!.onNMEAListener(paramLong, paramString)
+        if (inmeaListener != null) inmeaListener!!.onNMEA(paramLong, paramString)
     }
 
     override fun onProviderDisabled(paramString: String?) {}
@@ -27,6 +29,7 @@ class NMEAListener(paramContext: Context) : NmeaListener, LocationListener {
         inmeaListener = paramINMEAListener
     }
 
+    @SuppressLint("MissingPermission")
     fun startListen(): Boolean {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0.0f, this)
         isListening = true
@@ -40,7 +43,7 @@ class NMEAListener(paramContext: Context) : NmeaListener, LocationListener {
     }
 
     interface NMEAEventListener {
-        fun onNMEAListener(param1Long: Long, param1String: String?)
+        fun onNMEA(param1Long: Long, param1String: String?)
     }
 
     init {

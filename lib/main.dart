@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wbudy_apka/widgets/SensorDataDisplay.dart';
+import 'package:wbudy_apka/widgets/LocationDisplay.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(MyApp());
@@ -41,10 +42,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    requestPermissionAndStartNMEAListening();
+    requestPermissionAndStartLocationService();
   }
 
-  Future requestPermissionAndStartNMEAListening() async {
+  Future requestPermissionAndStartLocationService() async {
     List<PermissionGroup> permissonsList = List.of({PermissionGroup.location,PermissionGroup.locationAlways,PermissionGroup.locationWhenInUse});
     await PermissionHandler().requestPermissions(permissonsList);
     const platform = const MethodChannel('samples.flutter.dev/gps');
@@ -60,8 +61,13 @@ class _MyHomePageState extends State<MyHomePage> {
       body: SingleChildScrollView(child: 
         ListView(
           shrinkWrap: true,
-          children: 
-            _sensorsInfo.map((sensorInfo) => SesnsorDataDisplay(sensorMethod: sensorInfo['Method'], sensorName: sensorInfo['Name']) ).toList()
+          children:[
+            ListView(
+                shrinkWrap: true,
+                children: _sensorsInfo.map((sensorInfo) => SesnsorDataDisplay(sensorMethod: sensorInfo['Method'], sensorName: sensorInfo['Name']) ).toList()
+            ),
+            LocationDisplay()
+          ]
         )
       ),
     );
