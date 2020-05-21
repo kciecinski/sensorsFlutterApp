@@ -2,10 +2,14 @@ package com.example.wbudy_apka.location
 
 class Longitude {
     constructor(stringLongitude: String) {
-        longitude = stringLongitude
+        if (stringLongitude == "") {
+            longitude = ""
+        } else {
+            longitude = "%.2f".format(stringLongitude.toDouble())
+        }
     }
     constructor(androidLongitude: Double) {
-        longitude = androidLongitude.toString()
+        longitude = "%.2f".format(androidLongitude)
     }
     var longitude: String = ""
     override fun toString(): String {

@@ -2,10 +2,14 @@ package com.example.wbudy_apka.location
 
 class Latitude {
     constructor(stringLatitude: String){
-        latitude = stringLatitude
+        if (stringLatitude == "") {
+            latitude = ""
+        } else {
+            latitude = "%.2f".format(stringLatitude.toDouble())
+        }
     }
     constructor(androidLatitude: Double) {
-        latitude = androidLatitude.toString()
+        latitude = "%.2f".format(androidLatitude)
     }
     var latitude: String = ""
     override fun toString(): String {

@@ -46,10 +46,18 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future requestPermissionAndStartLocationService() async {
+    bool locationGranted = true;
     List<PermissionGroup> permissonsList = List.of({PermissionGroup.location,PermissionGroup.locationAlways,PermissionGroup.locationWhenInUse});
-    await PermissionHandler().requestPermissions(permissonsList);
-    const platform = const MethodChannel('samples.flutter.dev/gps');
-    platform.invokeMethod('startGps');
+    var permissions = await PermissionHandler().requestPermissions(permissonsList);
+    permissions.forEach((p, val) {
+      if(val != PermissionStatus.granted && p != PermissionGroup.location) {
+        locationGranted = false;
+      } 
+    });
+    if(locationGranted){
+      const platform = const MethodChannel('samples.flutter.dev/gps');
+      platform.invokeMethod('startGps');
+    }
   }
 
   @override

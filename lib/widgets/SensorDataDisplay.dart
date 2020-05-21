@@ -40,13 +40,13 @@ class _SesnsorDataDisplayState extends State<SesnsorDataDisplay> {
 
   void _setValues({double x, double y , double z}) {
     setState(() {
-      _values = {"x": x.toStringAsPrecision(3), "y":y.toStringAsPrecision(3), "z":z.toStringAsPrecision(3)};
+      _values = {"x": x?.toStringAsPrecision(3), "y":y?.toStringAsPrecision(3), "z":z?.toStringAsPrecision(3)};
     });
   }
 
     void _setSingleValue({double val}) {
     setState(() {
-      _values = {"value": val.toStringAsPrecision(3)};
+      _values = {"value": val?.toStringAsPrecision(3)};
     });
   }
 
