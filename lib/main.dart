@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wbudy_apka/page/SplashPage.dart';
+import 'package:wbudy_apka/service/PermissionService.dart';
 import 'package:wbudy_apka/widgets/SensorDataDisplay.dart';
 import 'package:wbudy_apka/widgets/LocationDisplay.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -52,15 +53,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future requestPermissionAndStartLocationService() async {
-    bool locationGranted = true;
-    List<PermissionGroup> permissonsList = List.of({PermissionGroup.location,PermissionGroup.locationAlways,PermissionGroup.locationWhenInUse});
-    var permissions = await PermissionHandler().requestPermissions(permissonsList);
-    permissions.forEach((p, val) {
-      if(val != PermissionStatus.granted && p != PermissionGroup.location) {
-        locationGranted = false;
-      } 
-    });
-    if(locationGranted){
+    var permissionsService = PermissionService();
+    bool granted = await permissionsService.askForGPSPermissions();
+    if(granted) {
       const platform = const MethodChannel('samples.flutter.dev/gps');
       platform.invokeMethod('startGps');
     }
@@ -70,7 +65,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title)
+        title: Text(widget.title),
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(child: 
         ListView(
