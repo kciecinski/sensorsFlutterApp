@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:wbudy_apka/page/SplashPage.dart';
 import 'package:wbudy_apka/widgets/SensorDataDisplay.dart';
 import 'package:wbudy_apka/widgets/LocationDisplay.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -16,7 +17,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
       ),
-      home: MyHomePage(title: 'Sensors Data'),
+      home: SplashPage(),
+      routes: <String,WidgetBuilder> {
+        '/home': (BuildContext context) => MyHomePage(title: 'Sensors Data')
+      }
     );
   }
 }
@@ -42,7 +46,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    requestPermissionAndStartLocationService();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      requestPermissionAndStartLocationService();
+    });
   }
 
   Future requestPermissionAndStartLocationService() async {
@@ -64,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(widget.title)
       ),
       body: SingleChildScrollView(child: 
         ListView(
