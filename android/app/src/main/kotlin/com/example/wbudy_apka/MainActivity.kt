@@ -83,8 +83,8 @@ class MainActivity: FlutterActivity() {
         } else {
           var position = locationService.getLastPosition()
           var positionHashMap: HashMap<String,String> = HashMap<String,String>()
-          positionHashMap.put("longtitude", position.longitude.longitude) 
-          positionHashMap.put("latitude", position.latitude.latitude)
+          positionHashMap.put("longtitude", position.longitude.longitude.toString())
+          positionHashMap.put("latitude", position.latitude.latitude.toString())
           positionHashMap.put("time",position.datetime.toString())
           positionHashMap.put("isPositionAvailable",locationServiceConnected.toString())
           if(position.availableAltitude)

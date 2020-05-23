@@ -22,8 +22,8 @@ public class Position {
 
     var altitude: Double = 0.0
     var availableAltitude: Boolean = false
-    var latitude: Latitude = Latitude("")
-    var longitude: Longitude = Longitude("")
+    var latitude: Latitude = Latitude()
+    var longitude: Longitude = Longitude()
     var datetime: Long = 0
     constructor() {
         valid = false

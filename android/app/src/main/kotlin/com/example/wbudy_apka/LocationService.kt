@@ -92,6 +92,7 @@ class LocationService : Service(), NMEAListener.NMEAEventListener, AndroidLocati
             val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
             val latitude = Latitude(location.latitude)
             val longitude = Longitude(location.longitude)
+
             val time = location.time
             val altitude = location.altitude
             lastPosition = Position(latitude,longitude,time,altitude)
