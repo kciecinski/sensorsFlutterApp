@@ -27,6 +27,7 @@ class LocationService : Service(), NMEAListener.NMEAEventListener, AndroidLocati
     private lateinit var nmeaLisener: NMEAListener
     private lateinit var androidLocationListener: AndroidLocationListener
     private lateinit var nmeaDecoder: NMEADecoder
+    private var nmeaCommunicationWorks: Boolean = false;
     override fun onCreate() {
         super.onCreate()
         binder = LocationServiceBinder(this)
@@ -74,12 +75,14 @@ class LocationService : Service(), NMEAListener.NMEAEventListener, AndroidLocati
 
 
     override fun onNMEA(param1Long: Long, param1String: String?){
+        nmeaCommunicationWorks = true
         param1String?.let { nmeaDecoder.decodeString(it) }
     }
 
 
     override fun onAndroidLocation(location: Location) {
-        //Toast.makeText(this@LocationService,location.toString(),Toast.LENGTH_LONG).show()
+        if(!nmeaCommunicationWorks)
+            lastPosition = Position.createFromAndroidLocation(location)
     }
 
     override fun newPosition(position: Position) {
@@ -90,12 +93,7 @@ class LocationService : Service(), NMEAListener.NMEAEventListener, AndroidLocati
     fun getLastPosition(): Position {
         if(lastPosition == null) {
             val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            val latitude = Latitude(location.latitude)
-            val longitude = Longitude(location.longitude)
-
-            val time = location.time
-            val altitude = location.altitude
-            lastPosition = Position(latitude,longitude,time,altitude)
+            lastPosition = Position.createFromAndroidLocation(location)
         }
         return lastPosition!!
     }

@@ -1,8 +1,6 @@
 package com.example.wbudy_apka.location
 
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
-import java.util.*
+import android.location.Location
 
 public class Position {
     companion object {
@@ -13,6 +11,13 @@ public class Position {
                 return Position(newer.latitude,newer.longitude,newer.datetime,older.altitude)
             }
             return newer
+        }
+        fun createFromAndroidLocation(location: Location): Position {
+            val latitude = Latitude(location.latitude)
+            val longitude = Longitude(location.longitude)
+            val time = location.time
+            val altitude = location.altitude
+            return Position(latitude,longitude,time,altitude)
         }
     }
     private var valid: Boolean = false;
