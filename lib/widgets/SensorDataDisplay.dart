@@ -5,10 +5,12 @@ import 'package:flutter/services.dart';
 
 class SesnsorDataDisplay extends StatefulWidget {
   
-SesnsorDataDisplay({this.sensorMethod, this.sensorName});
+SesnsorDataDisplay({this.sensorMethod, this.sensorName, this.onSnackbar, this.onWriteLog});
 
   final String sensorMethod;
   final String sensorName;
+  final Function onSnackbar;
+  final Function onWriteLog;
 
   @override
   _SesnsorDataDisplayState createState() => _SesnsorDataDisplayState();
@@ -19,6 +21,7 @@ class _SesnsorDataDisplayState extends State<SesnsorDataDisplay> {
 
   static const platform = const MethodChannel('samples.flutter.dev/sensors');
   Map _values = {};
+  bool isChanged = false;
 
   @override
   void initState() {
@@ -50,8 +53,32 @@ class _SesnsorDataDisplayState extends State<SesnsorDataDisplay> {
     });
   }
 
+  String buildLog(String text) {
+    return "${DateTime.now()} ${text} \n";
+  }
+
+  Future<void> checkLight() async {
+    if(double.parse(_values['value']) >= 4.0) {
+      if (isChanged == false) {
+        widget.onWriteLog(buildLog("Telefon wyjęty z kiszeni"));
+        isChanged = true;
+      }
+    } else {
+      if (isChanged == true) {
+        widget.onWriteLog(buildLog("Telefon w kiszeni"));
+        isChanged = false;
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if(widget.sensorName == "Light") {
+      checkLight();
+      return ListTile(
+        title: double.parse(_values['value']) >= 4.0 ? Text("Schowaj telefon urwisie") : Text("Telefon schowany"),
+      );
+    }
     return ListTile(
       title: Text(widget.sensorName),
       subtitle: Text(_values.toString()),
