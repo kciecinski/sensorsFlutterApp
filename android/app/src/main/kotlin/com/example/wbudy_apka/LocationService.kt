@@ -16,8 +16,6 @@ import io.flutter.Log
 
 
 class LocationService : Service(), NMEAListener.NMEAEventListener, AndroidLocationListener.AndroidLocationEventListener, PositionListener {
-
-
     companion object {
         private const val NOTIFICATION_ID = 101
     }

@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:path_provider/path_provider.dart';
+import 'package:wbudy_apka/page/FirstStartPage.dart';
 import 'package:wbudy_apka/page/SplashPage.dart';
+import 'package:wbudy_apka/service/ConfigurationService.dart';
 import 'package:wbudy_apka/service/PermissionService.dart';
 import 'package:wbudy_apka/widgets/SensorDataDisplay.dart';
 import 'package:wbudy_apka/widgets/LocationDisplay.dart';
@@ -15,6 +17,8 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
 
+
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -24,7 +28,8 @@ class MyApp extends StatelessWidget {
       ),
       home: SplashPage(),
       routes: <String,WidgetBuilder> {
-        '/home': (BuildContext context) => MyHomePage(title: 'Sensors Data')
+        '/home': (BuildContext context) => MyHomePage(title: 'Sensors Data'),
+        '/firstStart': (BuildContext context) => FirstStartPage()
       }
     );
   }
