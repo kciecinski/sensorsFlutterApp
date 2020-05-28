@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:wbudy_apka/service/LocationService.dart';
 
 class LocationDisplay extends StatefulWidget{
 
@@ -14,20 +15,17 @@ class LocationDisplay extends StatefulWidget{
 
 class _LocationDisplayState extends State<LocationDisplay> {
   Timer _everySecond;
-
-  final String isPositionAvailableMethod = "isPositionAvailable";
-  final String getPositionMethod = "getPosition";
-
-  static const platform = const MethodChannel('samples.flutter.dev/gps');
+  LocationService _locationService;
   Map _values = {};
 
   @override
   void initState() {
     super.initState();
     Map result = {};
+    _locationService = new LocationService();
     _everySecond = Timer.periodic(Duration(seconds: 1), (Timer t) async {
     try {
-      result = await platform.invokeMethod(getPositionMethod);
+      result = await _locationService.getPosition();
     } on PlatformException catch (e) {
       print(e);
     }

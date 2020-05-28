@@ -58,6 +58,7 @@ class MainActivity: FlutterActivity() {
             when(call.method) {
                 "startGps" -> startGpsService()
                 "getPosition" -> getPosition(result)
+                "isPositionAvailable" -> isPositionAvailable(result)
                 else -> {
                     result.notImplemented();
                 }
@@ -71,27 +72,24 @@ class MainActivity: FlutterActivity() {
         bindService(locationNMEAServiceIntent,locationServiceConnection,Context.BIND_AUTO_CREATE)
     }
 
-    private fun isPositionAvailable():HashMap<String,String> {
-        var returns: HashMap<String,String> = HashMap<String,String> ()
-        returns.put("isPositionAvailable",locationServiceConnected.toString())
-        return returns
+    private fun isPositionAvailable(result:MethodChannel.Result) {
+        result.success(locationServiceConnected)
     }
 
     private fun getPosition(result:MethodChannel.Result) {
+        var positionHashMap: HashMap<String,String> = HashMap<String,String>()
         if (!locationServiceConnected){
-          result.success(isPositionAvailable())
+            positionHashMap.put("isPositionAvailable",locationServiceConnected.toString())
         } else {
           var position = locationService.getLastPosition()
-          var positionHashMap: HashMap<String,String> = HashMap<String,String>()
           positionHashMap.put("longtitude", position.longitude.longitude.toString())
           positionHashMap.put("latitude", position.latitude.latitude.toString())
           positionHashMap.put("time",position.datetime.toString())
           positionHashMap.put("isPositionAvailable",locationServiceConnected.toString())
           if(position.availableAltitude)
               positionHashMap.put("altitude",position.altitude.toString())
-          result.success(positionHashMap)
         }
-
+        result.success(positionHashMap)
     } 
 
     private fun checkResultFor(values: HashMap<String,Double>, result:MethodChannel.Result): Void? {

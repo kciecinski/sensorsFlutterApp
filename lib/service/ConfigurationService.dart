@@ -26,6 +26,7 @@ class ConfigurationService{
   }
 
   Future<bool> isAppConfigured() async {
+    return false;
     if(!_prefsLoaded) {
       await reloadPreferences();
     }

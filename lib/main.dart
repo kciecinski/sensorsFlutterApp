@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:wbudy_apka/page/FirstStartPage.dart';
 import 'package:wbudy_apka/page/SplashPage.dart';
 import 'package:wbudy_apka/service/ConfigurationService.dart';
+import 'package:wbudy_apka/service/LocationService.dart';
 import 'package:wbudy_apka/service/PermissionService.dart';
 import 'package:wbudy_apka/widgets/SensorDataDisplay.dart';
 import 'package:wbudy_apka/widgets/LocationDisplay.dart';
@@ -66,8 +67,8 @@ class _MyHomePageState extends State<MyHomePage> {
     var permissionsService = PermissionService();
     bool granted = await permissionsService.askForGPSPermissions();
     if(granted) {
-      const platform = const MethodChannel('samples.flutter.dev/gps');
-      platform.invokeMethod('startGps');
+      var locationService = new LocationService();
+      locationService.startGps();
     }
   }
 
