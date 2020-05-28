@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wbudy_apka/model/LatLong.dart';
 
 class ConfigurationService{
   static ConfigurationService _instance = null;
@@ -26,7 +28,6 @@ class ConfigurationService{
   }
 
   Future<bool> isAppConfigured() async {
-    return false;
     if(!_prefsLoaded) {
       await reloadPreferences();
     }
@@ -64,5 +65,77 @@ class ConfigurationService{
     }
     var key = "deviceOwner";
     _prefs.setString(key, deviceOwner);
+  }
+
+  Future<TimeOfDay> getSchoolStartAt() async {
+    if(!_prefsLoaded) {
+      await reloadPreferences();
+    }
+    var keyH = "hourStart";
+    var keyM = "minuteStart";
+    if(_prefs.containsKey(keyH) && _prefs.containsKey(keyM)) {
+      var h = _prefs.getInt(keyH);
+      var m = _prefs.getInt(keyM);
+      return TimeOfDay(hour: h, minute: m);
+    }
+    throw("Value not exist");
+  }
+
+  Future setSchoolStartAt(TimeOfDay timeOfDay) async {
+    if(!_prefsLoaded) {
+      await reloadPreferences();
+    }
+    var keyH = "hourStart";
+    var keyM = "minuteStart";
+    _prefs.setInt(keyH, timeOfDay.hour);
+    _prefs.setInt(keyM, timeOfDay.minute);
+  }
+
+  Future<TimeOfDay> getSchoolEndAt() async {
+    if(!_prefsLoaded) {
+      await reloadPreferences();
+    }
+    var keyH = "hourEnd";
+    var keyM = "minuteEnd";
+    if(_prefs.containsKey(keyH) && _prefs.containsKey(keyM)) {
+      var h = _prefs.getInt(keyH);
+      var m = _prefs.getInt(keyM);
+      return TimeOfDay(hour: h, minute: m);
+    }
+    throw("Value not exist");
+  }
+
+  Future setSchoolEndAt(TimeOfDay timeOfDay) async {
+    if(!_prefsLoaded) {
+      await reloadPreferences();
+    }
+    var keyH = "hourEnd";
+    var keyM = "minuteEnd";
+    _prefs.setInt(keyH, timeOfDay.hour);
+    _prefs.setInt(keyM, timeOfDay.minute);
+  }
+
+  Future<LatLong> getSchoolLocation() async {
+    if(!_prefsLoaded) {
+      await reloadPreferences();
+    }
+    var keyLat = "latSchool";
+    var keyLong = "longSchool";
+    if(_prefs.containsKey(keyLat) && _prefs.containsKey(keyLong)) {
+      var lat = _prefs.getDouble(keyLat);
+      var long = _prefs.getDouble(keyLong);
+      return new LatLong(lat, long);
+    }
+    throw("Value not exist");
+  }
+
+  Future setSchoolLocation(LatLong latLong) async {
+    if(!_prefsLoaded) {
+      await reloadPreferences();
+    }
+    var keyLat = "latSchool";
+    var keyLong = "longSchool";
+    _prefs.setDouble(keyLat, latLong.latitude);
+    _prefs.setDouble(keyLong, latLong.longtitude);
   }
 }

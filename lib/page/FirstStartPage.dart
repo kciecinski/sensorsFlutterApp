@@ -1,5 +1,9 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:nominatim_location_picker/nominatim_location_picker.dart';
+import 'package:wbudy_apka/model/LatLong.dart';
 import 'package:wbudy_apka/service/ConfigurationService.dart';
 
 class FirstStartPage extends StatefulWidget {
@@ -23,10 +27,14 @@ class _FirstStartPageState extends State<FirstStartPage> {
   bool _schoolStartsAtSelected = false;
   TimeOfDay _schoolEndsAt = TimeOfDay.fromDateTime(DateTime.now());
   bool _schoolEndsAtSelected = false;
+  double _latitude = 0;
+  double _longitude = 0;
+  bool _selectedPlace = false;
+
 
   bool get _canContinueAdditionalQuestion {
     if(_selectedDeviceOwner == ConfigurationService.OwnerChild) {
-      return _schoolStartsAtSelected && _schoolEndsAtSelected;
+      return _schoolStartsAtSelected && _schoolEndsAtSelected && _selectedPlace;
     }
     else {
       return true;
@@ -103,8 +111,29 @@ class _FirstStartPageState extends State<FirstStartPage> {
                         });
                       },
                   ),
-                  Text("Gdzie znajduję się szkoła?")
-                ],
+                  Text("Gdzie znajduję się szkoła?"),
+                  RaisedButton(
+                    child: Text(_selectedPlace ? _latitude.toString()+" , "+_longitude.toString() : "Wybierz miejsce"),
+                    onPressed: () {
+                      showDialog(context: context, builder: (BuildContext ctx) {
+                          return NominatimLocationPicker(
+                              searchHint: 'Gdzie znajduję się szkoła',
+                              awaitingForLocation: "Oczekiwanie na lokalizacje",
+                          );
+                        }).then((obj) {
+                          LinkedHashMap<dynamic,dynamic> pos = obj;
+                          var latLng = pos['latlng'];
+                          double latitude = latLng.latitude;
+                          double longitude = latLng.longitude;
+                          setState(() {
+                            _latitude = latitude;
+                            _longitude = longitude;
+                            _selectedPlace = true;
+                          });
+                      });
+                    }
+                  )
+                ]
               )
           ));
     } else {
@@ -134,6 +163,9 @@ class _FirstStartPageState extends State<FirstStartPage> {
   Future _setConfiguration() async {
     var configurationService = new ConfigurationService();
     await configurationService.setDeviceOwner(_selectedDeviceOwner);
+    await configurationService.setSchoolStartAt(_schoolStartsAt);
+    await configurationService.setSchoolEndAt(_schoolEndsAt);
+    await configurationService.setSchoolLocation(LatLong(_latitude,_longitude));
     await configurationService.setAppConfigured(true);
   }
 
