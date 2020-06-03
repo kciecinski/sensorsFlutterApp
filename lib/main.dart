@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:wbudy_apka/page/FirstStartPage.dart';
-import 'package:wbudy_apka/page/HomePage.dart';
+import 'package:wbudy_apka/page/MyHomePage.dart';
 import 'package:wbudy_apka/page/SplashPage.dart';
 
 void main() => runApp(MyApp());
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       ),
       home: SplashPage(),
       routes: <String,WidgetBuilder> {
-        '/home': (BuildContext context) => HomePage(title: 'Sensors Data'),
+        '/home': (BuildContext context) => MyHomePage(title: 'Sensors Data'),
         '/firstStart': (BuildContext context) => FirstStartPage()
       }
     );

@@ -8,17 +8,17 @@ import 'package:wbudy_apka/service/PermissionService.dart';
 import 'package:wbudy_apka/widgets/LocationDisplay.dart';
 import 'package:wbudy_apka/widgets/SensorDataDisplay.dart';
 
-class HomePage extends StatefulWidget {
-  HomePage({Key key, this.title}) : super(key: key);
+class MyHomePage extends StatefulWidget {
+  MyHomePage({Key key, this.title}) : super(key: key);
 
   final String title;
 
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _MyHomePageState extends State<MyHomePage> {
 
   List<Map> _sensorsInfo = [
     {"Name": "Gyroscope", "Method": "getGyroscopeValues"},
