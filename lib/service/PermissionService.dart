@@ -7,7 +7,6 @@ class PermissionService {
     if(_instance == null) {
       _instance = new PermissionService._constructor();
     }
-    print(_instance);
     return _instance;
   }
   PermissionService._constructor() {}
@@ -26,7 +25,6 @@ class PermissionService {
   }
 
   Future<bool> askForGPSPermissions() async {
-    print(_gpsPermissionsList);
     return askForPermissions(_gpsPermissionsList);
   }
 }

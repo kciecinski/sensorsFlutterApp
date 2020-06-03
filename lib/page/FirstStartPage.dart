@@ -171,42 +171,45 @@ class _FirstStartPageState extends State<FirstStartPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Pierwsze uruchomienie"),
-        automaticallyImplyLeading: false,
-      ),
-      body: SingleChildScrollView(
-        child: Stepper(
-          currentStep: _currentStep,
-          onStepContinue: () {
-            setState(() {
-              if(_currentStep == 1) {
-                if(_canContinueAdditionalQuestion) {
-                  _currentStep++;
-                }
-              }
-              else if(_currentStep == (_steps.length-1)) {
-                _setConfiguration().whenComplete(() {
-                  Navigator.pushNamed(context, '/home');
-                });
-              }
-              else if(_currentStep < (_steps.length-1)){
-                _currentStep++;
-              }
-            });
-          },
-          onStepCancel: (){
-            setState(() {
-              _currentStep--;
-              if(_currentStep < 0) {
-                _currentStep = 0;
-              }
-            });
-          },
-          steps: _steps
-        ),
-      )
+    return WillPopScope(
+        onWillPop: () async => false,
+        child: Scaffold(
+            appBar: AppBar(
+              title: Text("Pierwsze uruchomienie"),
+              automaticallyImplyLeading: false,
+            ),
+            body: SingleChildScrollView(
+              child: Stepper(
+                  currentStep: _currentStep,
+                  onStepContinue: () {
+                    setState(() {
+                      if(_currentStep == 1) {
+                        if(_canContinueAdditionalQuestion) {
+                          _currentStep++;
+                        }
+                      }
+                      else if(_currentStep == (_steps.length-1)) {
+                        _setConfiguration().whenComplete(() {
+                          Navigator.pushNamed(context, '/home');
+                        });
+                      }
+                      else if(_currentStep < (_steps.length-1)){
+                        _currentStep++;
+                      }
+                    });
+                  },
+                  onStepCancel: (){
+                    setState(() {
+                      _currentStep--;
+                      if(_currentStep < 0) {
+                        _currentStep = 0;
+                      }
+                    });
+                  },
+                  steps: _steps
+              ),
+            )
+        )
     );
   }
 

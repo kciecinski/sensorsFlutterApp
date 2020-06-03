@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:wbudy_apka/page/FirstStartPage.dart';
+import 'package:wbudy_apka/page/HomePage.dart';
+import 'package:wbudy_apka/page/InfoGPSPage.dart';
 import 'package:wbudy_apka/page/MyHomePage.dart';
 import 'package:wbudy_apka/page/SplashPage.dart';
 
@@ -18,8 +20,11 @@ class MyApp extends StatelessWidget {
       ),
       home: SplashPage(),
       routes: <String,WidgetBuilder> {
-        '/home': (BuildContext context) => MyHomePage(title: 'Sensors Data'),
-        '/firstStart': (BuildContext context) => FirstStartPage()
+        '/splashPage': (BuildContext context) => SplashPage(),
+        '/home': (BuildContext context) => HomePage(),
+        '/myhome': (BuildContext context) => MyHomePage(),
+        '/firstStart': (BuildContext context) => FirstStartPage(),
+        '/infoGps': (BuildContext context) => InfoGPSPage()
       }
     );
   }

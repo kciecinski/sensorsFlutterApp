@@ -9,7 +9,6 @@ class SplashPage extends StatefulWidget {
 
   @override
   StatefulElement createElement() {
-    print("crateElement");
     return super.createElement();
   }
 
@@ -23,9 +22,7 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   void initState() {
-    print("initState");
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      print("postFrameCallback");
       var permissionsService = new PermissionService();
       permissionsService.askForGPSPermissions().whenComplete(() => this._permissonsAsked());
     });
@@ -44,14 +41,13 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
-    print("build");
     return Scaffold(
       body: Center(
         child: ListView(
           shrinkWrap: true,
           children: <Widget>[
             FlutterLogo(),
-            Center(child: Text('Nazwa apki'))
+            Center(child: Text('wbudy_apka'))
           ],
         ),
       ),
@@ -61,6 +57,5 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void didUpdateWidget(SplashPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    print("didUpdateWidget");
   }
 }

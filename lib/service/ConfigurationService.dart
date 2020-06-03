@@ -8,11 +8,9 @@ class ConfigurationService{
     if(_instance == null) {
       _instance = new ConfigurationService._constructor();
     }
-    print(_instance);
     return _instance;
   }
   ConfigurationService._constructor() {
-    print("ConfigurationService constructor");
     _prefsLoaded = false;
   }
 

@@ -1,17 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:wbudy_apka/service/LocationService.dart';
-import 'package:wbudy_apka/service/PermissionService.dart';
-import 'package:wbudy_apka/widgets/LocationDisplay.dart';
 import 'package:wbudy_apka/widgets/SensorDataDisplay.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key key}) : super(key: key);
 
-  final String title;
+  final String title = "Sensors";
 
 
   @override
@@ -27,22 +23,6 @@ class _MyHomePageState extends State<MyHomePage> {
     {"Name": "Light", "Method": "getLightValues"}
   ];
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
-
-  @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      requestPermissionAndStartLocationService();
-    });
-  }
-
-  Future requestPermissionAndStartLocationService() async {
-    var permissionsService = PermissionService();
-    bool granted = await permissionsService.askForGPSPermissions();
-    if(granted) {
-      var locationService = new LocationService();
-      locationService.startGps();
-    }
-  }
 
   writeLog(String logText) async {
     final Directory directory = await getExternalStorageDirectory();
@@ -60,8 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
-        automaticallyImplyLeading: false,
+        title: Text(widget.title)
       ),
       key: _scaffoldKey,
       body: SingleChildScrollView(child:
@@ -71,8 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ListView(
                 shrinkWrap: true,
                 children: _sensorsInfo.map((sensorInfo) => SesnsorDataDisplay(sensorMethod: sensorInfo['Method'], sensorName: sensorInfo['Name'], onWriteLog: writeLog, onSnackbar: onSnackbar,) ).toList()
-            ),
-            LocationDisplay()
+            )
           ]
       )
       ),
