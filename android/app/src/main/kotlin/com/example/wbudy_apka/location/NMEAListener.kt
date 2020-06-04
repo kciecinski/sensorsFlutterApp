@@ -1,17 +1,15 @@
 package com.example.wbudy_apka.location
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.PackageManager
+import android.location.GpsStatus
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
-import android.location.GpsStatus.NmeaListener
-import androidx.core.app.ActivityCompat
 
-class NMEAListener(paramContext: Context) : NmeaListener, LocationListener {
+//TODO add implementation for api leval > 24
+class NMEAListener(paramContext: Context) : GpsStatus.NmeaListener, LocationListener {
     private var inmeaListener: NMEAEventListener? = null
     var isListening = false
         private set

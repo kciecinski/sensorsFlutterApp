@@ -7,6 +7,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.location.Criteria
 import android.location.Location
 import android.location.LocationManager
 import android.os.Binder
@@ -52,7 +53,7 @@ class LocationService : Service(), NMEAListener.NMEAEventListener, AndroidLocati
     }
 
     override fun onBind(intent: Intent?): IBinder? {
-        Log.i("LocationService","onBind")
+        nmeaCommunicationWorks = false;
         return binder
     }
 
@@ -73,7 +74,6 @@ class LocationService : Service(), NMEAListener.NMEAEventListener, AndroidLocati
 
 
     override fun onNMEA(param1Long: Long, param1String: String?){
-        nmeaCommunicationWorks = true
         param1String?.let { nmeaDecoder.decodeString(it) }
     }
 
@@ -84,17 +84,42 @@ class LocationService : Service(), NMEAListener.NMEAEventListener, AndroidLocati
     }
 
     override fun newPosition(position: Position) {
+        nmeaCommunicationWorks = true
         lastPosition = position
     }
 
     @SuppressLint("MissingPermission")
     fun getLastPosition(): Position {
         if(lastPosition == null) {
-            val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            lastPosition = Position.createFromAndroidLocation(location)
+            var location: Location? = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            if(location != null) {
+                lastPosition = Position.createFromAndroidLocation(location)
+            } else {
+                val providers = locationManager.allProviders
+                var usedProvider: String = ""
+                for (provider in providers) {
+                    val x: Location? = locationManager.getLastKnownLocation(provider)
+                    if(x!=null) {
+                        location = x
+                        usedProvider = provider.toString()
+                        break
+                    }
+                }
+                if(location != null) {
+                    lastPosition = Position.createFromAndroidLocation(location)
+                    print("Provider: "+ usedProvider)
+                } else {
+                    throw error("Location not available")
+                }
+            }
         }
         return lastPosition!!
     }
+
+    fun getNMEAWorks(): Boolean {
+        return this.nmeaCommunicationWorks;
+    }
+    
     class LocationServiceBinder(var locationService: LocationService) : Binder() {
         val service: LocationService
             get() = this.locationService

@@ -16,6 +16,7 @@ class LocationService {
   final String _isPositionAvailableMethod = "isPositionAvailable";
   final String _getPositionMethod = "getPosition";
   final String _startGpsMethod = "startGps";
+  final String _isNMEAWorksMethod = "isNMEAWorks";
   final MethodChannel _platform = const MethodChannel('samples.flutter.dev/gps');
 
   Future startGps() async {
@@ -47,6 +48,10 @@ class LocationService {
 
   Future<bool> isPositionAvailable() async {
     return await _platform.invokeMethod(_isPositionAvailableMethod);
+  }
+
+  Future<bool> isNMEAWorks() async {
+    return await _platform.invokeMethod(_isNMEAWorksMethod);
   }
 
 }

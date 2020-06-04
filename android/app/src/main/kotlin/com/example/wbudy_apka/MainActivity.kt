@@ -59,6 +59,7 @@ class MainActivity: FlutterActivity() {
                 "startGps" -> startGpsService()
                 "getPosition" -> getPosition(result)
                 "isPositionAvailable" -> isPositionAvailable(result)
+                "isNMEAWorks" -> isNMEAWorks(result)
                 else -> {
                     result.notImplemented();
                 }
@@ -74,6 +75,10 @@ class MainActivity: FlutterActivity() {
 
     private fun isPositionAvailable(result:MethodChannel.Result) {
         result.success(locationServiceConnected)
+    }
+
+    private fun isNMEAWorks(result:MethodChannel.Result) {
+        result.success(locationService.getNMEAWorks())
     }
 
     private fun getPosition(result:MethodChannel.Result) {

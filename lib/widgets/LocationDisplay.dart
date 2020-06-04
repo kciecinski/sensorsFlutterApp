@@ -19,6 +19,7 @@ class _LocationDisplayState extends State<LocationDisplay> {
   Timer _everySecond;
   LocationService _locationService;
   HashMap<String,dynamic> _values = HashMap<String,dynamic>();
+  bool _nmeaWorks = false;
 
   @override
   void initState() {
@@ -26,13 +27,18 @@ class _LocationDisplayState extends State<LocationDisplay> {
     HashMap<String,dynamic> result = HashMap<String,dynamic>();
     _locationService = new LocationService();
     _everySecond = Timer.periodic(Duration(seconds: 1), (Timer t) async {
+    bool nmeaWorks = false;
     try {
       result = await _locationService.getPosition();
+      if(result['isPositionAvailable'] == true) {
+        nmeaWorks  = await _locationService.isNMEAWorks();
+      }
     } on PlatformException catch (e) {
       print(e);
     }
     setState(() {
       _values = result;
+      _nmeaWorks = nmeaWorks;
     });
   }
   );
@@ -71,6 +77,10 @@ class _LocationDisplayState extends State<LocationDisplay> {
     return ListView(
       shrinkWrap: true,
       children: <Widget>[
+        ListTile(
+            title: Text("Czy dane pchodzą z komunikatów NMEA"),
+            subtitle: Text(_nmeaWorks ? "Tak" : "Nie")
+        ),
         ListTile(
           title: Text("Wysokość"),
           subtitle: Text(_values['altitude'].toString()+" m")

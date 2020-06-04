@@ -46,13 +46,8 @@ class NMEADecoder {
                 "GPGSA" -> decodeStringGPGSA(nmea)
                 "GNGSA" -> decodeStringGNGSA(nmea)
                 else -> {
-                    println("Unsupported: "+nmea)
+                    //println("Unsupported: "+nmea)
                 }
-            }
-        }
-        if(state.getMessageCounter() == state.getTotalMessageCounter()) {
-            for(sv in state.getAllSVInView()){
-                println(sv)
             }
         }
     }
