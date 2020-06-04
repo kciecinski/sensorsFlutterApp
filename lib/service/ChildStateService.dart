@@ -20,7 +20,7 @@ class ChildStateService {
       var result = await _locationService.getPosition();
       LatLong currentPos = result['latlong'];
       LatLong schoolPos = await _configurationService.getSchoolLocation();
-      return schoolPos.distance(currentPos);
+      return schoolPos.distanceInKilometers(currentPos)*1000;
     }
     return 0;
   }

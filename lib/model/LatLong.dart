@@ -7,20 +7,17 @@ class LatLong
 
   LatLong(this.latitude, this.longtitude);
   double degreesToRadians(degrees) {
-    return degrees;
+    return degrees*(pi/180);
   }
-  double distance(LatLong other) {
-    var earthRadiusKm = 5842.42;
-    var dLat = degreesToRadians(other.latitude-this.latitude);
-    var dLon = degreesToRadians(other.longtitude-this.longtitude);
-    var lat = degreesToRadians(other.latitude);
-    var long = degreesToRadians(other.longtitude);
-    var a = sin(dLat/2)*sin(dLat/2)+sin(dLon/2)+sin(dLon/2)*cos(lat);
-    if(a < 0){
-      a *= -1;
-    }
-    var c = 2*atan2(sqrt(a),sqrt(1-a));
-    return earthRadiusKm*c;
+  double distanceInKilometers(LatLong other) {
+    var dlat = degreesToRadians(other.latitude-this.latitude);
+    var dlong = degreesToRadians(other.longtitude-this.longtitude);
+    var lat1 = degreesToRadians(other.latitude);
+    var lat2 = degreesToRadians(this.latitude);
+    var long1 = degreesToRadians(other.longtitude);
+    var long2 = degreesToRadians(this.latitude);
+    var a = 0.5 - cos(dlat)/2 + cos(lat1)*cos(lat2)*(1-cos(dlong))/2;
+    return asin(sqrt(a))*12742;
   }
 
   @override
