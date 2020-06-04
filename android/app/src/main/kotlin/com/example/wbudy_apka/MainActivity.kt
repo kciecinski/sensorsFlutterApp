@@ -19,23 +19,24 @@ import io.flutter.plugins.GeneratedPluginRegistrant
 class MainActivity: FlutterActivity() {
     private val SENSORS_CHANNEL = "samples.flutter.dev/sensors"
     private val GPS_CHANNEL = "samples.flutter.dev/gps"
+    private val OTHER_CHANNEL = "samples.flutter.dev/other"
     
     val gyroListener = PositionAndMotionListener();
     val accListener = PositionAndMotionListener();
     val magneticListener = PositionAndMotionListener();
     val lightListener = EnvirementalListener();
 
-    private lateinit var locationNMEAServiceIntent: Intent
-    private lateinit var locationService: LocationService
-    private var locationServiceConnected: Boolean = false
-    private val locationServiceConnection: ServiceConnection = object : ServiceConnection {
+    private lateinit var wbudyServiceIntent: Intent
+    private lateinit var wbudyService: WbudyService
+    private var wbudyServiceConnected: Boolean = false
+    private val wbudyServiceConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            val binder: LocationService.LocationServiceBinder = service as LocationService.LocationServiceBinder
-            locationService = binder.service
-            locationServiceConnected = true
+            val binder: WbudyService.WbudyServiceBinder = service as WbudyService.WbudyServiceBinder
+            wbudyService = binder.service
+            wbudyServiceConnected = true
         }
         override fun onServiceDisconnected(arg0: ComponentName) {
-            locationServiceConnected = false
+            wbudyServiceConnected = false
         }
     }
 
@@ -56,7 +57,7 @@ class MainActivity: FlutterActivity() {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, GPS_CHANNEL).setMethodCallHandler {
             call, result ->
             when(call.method) {
-                "startGps" -> startGpsService()
+                "startGps" -> startService()
                 "getPosition" -> getPosition(result)
                 "isPositionAvailable" -> isPositionAvailable(result)
                 "isNMEAWorks" -> isNMEAWorks(result)
@@ -65,32 +66,43 @@ class MainActivity: FlutterActivity() {
                 }
             }
         }
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger,OTHER_CHANNEL).setMethodCallHandler {
+            call, result ->
+            when(call.method) {
+                "getChildState" -> getChildState(result)
+                else -> {
+                    result.notImplemented()
+                }
+            }
+        }
     }
-
-    private fun startGpsService() {
-        locationNMEAServiceIntent = Intent(this,LocationService::class.java)
-        startService(locationNMEAServiceIntent)
-        bindService(locationNMEAServiceIntent,locationServiceConnection,Context.BIND_AUTO_CREATE)
+    private fun getChildState(result:MethodChannel.Result) {
+        result.success(wbudyService.getChildStateHashMap())
+    }
+    private fun startService() {
+        wbudyServiceIntent = Intent(this,WbudyService::class.java)
+        startService(wbudyServiceIntent)
+        bindService(wbudyServiceIntent,wbudyServiceConnection,Context.BIND_AUTO_CREATE)
     }
 
     private fun isPositionAvailable(result:MethodChannel.Result) {
-        result.success(locationServiceConnected)
+        result.success(wbudyServiceConnected)
     }
 
     private fun isNMEAWorks(result:MethodChannel.Result) {
-        result.success(locationService.getNMEAWorks())
+        result.success(wbudyService.isNMEAWorks())
     }
 
     private fun getPosition(result:MethodChannel.Result) {
         var positionHashMap: HashMap<String,String> = HashMap<String,String>()
-        if (!locationServiceConnected){
-            positionHashMap.put("isPositionAvailable",locationServiceConnected.toString())
+        if (!wbudyServiceConnected){
+            positionHashMap.put("isPositionAvailable",wbudyServiceConnected.toString())
         } else {
-          var position = locationService.getLastPosition()
+          val position = wbudyService.lastPosition
           positionHashMap.put("longtitude", position.longitude.longitude.toString())
           positionHashMap.put("latitude", position.latitude.latitude.toString())
           positionHashMap.put("time",position.datetime.toString())
-          positionHashMap.put("isPositionAvailable",locationServiceConnected.toString())
+          positionHashMap.put("isPositionAvailable",wbudyServiceConnected.toString())
           if(position.availableAltitude)
               positionHashMap.put("altitude",position.altitude.toString())
         }

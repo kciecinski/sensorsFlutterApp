@@ -21,22 +21,21 @@ class _ChildStateDisplayState extends State<ChildStateDisplay> {
   LocationService _locationService = LocationService();
   ConfigurationService _configurationService = ConfigurationService();
   double _distanceToSchool;
-  LatLong _schoolPos = LatLong(0,0);
-  LatLong _currentPos = LatLong(0,0);
+  bool _shouldBeInSchool;
+  bool _inSchool;
 
   @override
   void initState() {
     super.initState();
     _everySecond = Timer.periodic(Duration(seconds: 1), (Timer t) async {
-      var distanceToSchool = await _childStateService.distanceToSchool();
-
-      var schoolPos = await _configurationService.getSchoolLocation();
-      var currentPos = (await _locationService.getPosition())['latlong'] as LatLong;
-
+      var childState = await _childStateService.getChildState();
+      var distanceToSchool = double.parse(childState["distanceToSchool"])*1000;
+      bool shouldBeInSchool = (childState["shouldBeInSchool"] == "true");
+      bool inSchool = (childState["inSchool"] == "true");
       setState(() {
         _distanceToSchool = distanceToSchool;
-        _schoolPos = schoolPos;
-        _currentPos = currentPos;
+        _shouldBeInSchool = shouldBeInSchool;
+        _inSchool = inSchool;
       });
     });
   }
@@ -48,7 +47,15 @@ class _ChildStateDisplayState extends State<ChildStateDisplay> {
       children: <Widget>[
         ListTile(
           title: Text("Odległość do szkoły"),
-          subtitle: Text(_distanceToSchool.toStringAsFixed(2)+" m"),
+          subtitle: Text(_distanceToSchool != null ? _distanceToSchool.toStringAsFixed(2)+" m" : "-"),
+        ),
+        ListTile(
+          title: Text("W szkole"),
+          subtitle: Text(_inSchool != null ? (_inSchool ? "Tak" : "Nie") : "-"),
+        ),
+        ListTile(
+          title: Text("Powinnien być w szkole"),
+          subtitle: Text(_shouldBeInSchool != null ? (_shouldBeInSchool ? "Tak" : "Nie") : "-"),
         )
       ],
     );
