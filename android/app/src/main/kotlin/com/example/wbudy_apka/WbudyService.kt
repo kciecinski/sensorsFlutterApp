@@ -146,8 +146,8 @@ class WbudyService : Service(), NMEAListener.NMEAEventListener, AndroidLocationL
         return this.nmeaCommunicationWorks;
     }
 
-    fun getChildStateHashMap(): HashMap<String,String> {
-        return childState.asHashMap();
+    fun getChildState(): ChildState {
+        return childState;
     }
     
     class WbudyServiceBinder(var wbudyService: WbudyService) : Binder() {

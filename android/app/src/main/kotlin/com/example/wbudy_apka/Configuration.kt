@@ -11,8 +11,8 @@ class Configuration(private var context: Context) {
         val OwnerParent = "Parent"
         val OwnerChild = "Child"
     }
-    private val PREFIX = "flutter."
-    private val SHARED_PREFERENCES_NAME: String = "FlutterSharedPreferences"
+    private val PREFIX = "config."
+    private val SHARED_PREFERENCES_NAME: String = "WbudyAppSharedPreferences"
     private val LIST_IDENTIFIER: String = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu";
     private val BIG_INTEGER_PREFIX: String = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBCaWdJbnRlZ2Vy";
     private val DOUBLE_PREFIX: String = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu";
@@ -48,7 +48,7 @@ class Configuration(private var context: Context) {
     }
     fun setInt(key: String, value: Int) {
         val editor = prefs.edit()
-        editor.putInt(key,value)
+        editor.putInt(PREFIX+key,value)
         editor.commit()
     }
     fun getBool(key: String): Boolean {
@@ -59,7 +59,7 @@ class Configuration(private var context: Context) {
     }
     fun setBool(key: String, value: Boolean) {
         val editor = prefs.edit()
-        editor.putBoolean(key,value)
+        editor.putBoolean(PREFIX+key,value)
         editor.commit()
     }
     fun getString(key: String): String {
@@ -74,7 +74,7 @@ class Configuration(private var context: Context) {
     }
     fun setString(key: String, value: String) {
         val editor = prefs.edit()
-        editor.putString(key,value)
+        editor.putString(PREFIX+key,value)
         editor.commit()
     }
 

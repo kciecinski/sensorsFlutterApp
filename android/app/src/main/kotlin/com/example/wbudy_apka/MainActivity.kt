@@ -68,10 +68,32 @@ class MainActivity: FlutterActivity() {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, GPS_CHANNEL).setMethodCallHandler {
             call, result ->
             when(call.method) {
-                "startGps" -> startService()
-                "getPosition" -> getPosition(result)
-                "isPositionAvailable" -> isPositionAvailable(result)
-                "isNMEAWorks" -> isNMEAWorks(result)
+                "startGps" -> {
+                    wbudyServiceIntent = Intent(this,WbudyService::class.java)
+                    startService(wbudyServiceIntent)
+                    bindService(wbudyServiceIntent,wbudyServiceConnection,Context.BIND_AUTO_CREATE)
+                }
+                "getPosition" -> {
+                    var positionHashMap: HashMap<String,String> = HashMap<String,String>()
+                    if (!wbudyServiceConnected){
+                        positionHashMap.put("isPositionAvailable",wbudyServiceConnected.toString())
+                    } else {
+                        val position = wbudyService.lastPosition
+                        positionHashMap.put("longtitude", position.longitude.longitude.toString())
+                        positionHashMap.put("latitude", position.latitude.latitude.toString())
+                        positionHashMap.put("time",position.datetime.toString())
+                        positionHashMap.put("isPositionAvailable",wbudyServiceConnected.toString())
+                        if(position.availableAltitude)
+                            positionHashMap.put("altitude",position.altitude.toString())
+                    }
+                    result.success(positionHashMap)
+                }
+                "isPositionAvailable" -> {
+                    result.success(wbudyServiceConnected)
+                }
+                "isNMEAWorks" -> {
+                    result.success(wbudyService.isNMEAWorks())
+                }
                 else -> {
                     result.notImplemented();
                 }
@@ -80,7 +102,14 @@ class MainActivity: FlutterActivity() {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger,OTHER_CHANNEL).setMethodCallHandler {
             call, result ->
             when(call.method) {
-                "getChildState" -> getChildState(result)
+                "getChildState" -> {
+                    val childState = wbudyService.getChildState()
+                    val hashMap: HashMap<String,String> =  HashMap<String,String>()
+                    hashMap.put("distanceToSchool",childState.getDistanceToSchool().toString())
+                    hashMap.put("shouldBeInSchool",childState.isShouldBeInSchool().toString())
+                    hashMap.put("inSchool",childState.isInSchool().toString())
+                    result.success(hashMap)
+                }
                 else -> {
                     result.notImplemented()
                 }
@@ -170,38 +199,6 @@ class MainActivity: FlutterActivity() {
             }
         }
     }
-    private fun getChildState(result:MethodChannel.Result) {
-        result.success(wbudyService.getChildStateHashMap())
-    }
-    private fun startService() {
-        wbudyServiceIntent = Intent(this,WbudyService::class.java)
-        startService(wbudyServiceIntent)
-        bindService(wbudyServiceIntent,wbudyServiceConnection,Context.BIND_AUTO_CREATE)
-    }
-
-    private fun isPositionAvailable(result:MethodChannel.Result) {
-        result.success(wbudyServiceConnected)
-    }
-
-    private fun isNMEAWorks(result:MethodChannel.Result) {
-        result.success(wbudyService.isNMEAWorks())
-    }
-
-    private fun getPosition(result:MethodChannel.Result) {
-        var positionHashMap: HashMap<String,String> = HashMap<String,String>()
-        if (!wbudyServiceConnected){
-            positionHashMap.put("isPositionAvailable",wbudyServiceConnected.toString())
-        } else {
-          val position = wbudyService.lastPosition
-          positionHashMap.put("longtitude", position.longitude.longitude.toString())
-          positionHashMap.put("latitude", position.latitude.latitude.toString())
-          positionHashMap.put("time",position.datetime.toString())
-          positionHashMap.put("isPositionAvailable",wbudyServiceConnected.toString())
-          if(position.availableAltitude)
-              positionHashMap.put("altitude",position.altitude.toString())
-        }
-        result.success(positionHashMap)
-    } 
 
     private fun checkResultFor(values: HashMap<String,Double>, result:MethodChannel.Result): Void? {
       if (values != {}) {

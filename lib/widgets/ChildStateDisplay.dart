@@ -29,6 +29,7 @@ class _ChildStateDisplayState extends State<ChildStateDisplay> {
     super.initState();
     _everySecond = Timer.periodic(Duration(seconds: 1), (Timer t) async {
       var childState = await _childStateService.getChildState();
+      print(childState);
       var distanceToSchool = double.parse(childState["distanceToSchool"])*1000;
       bool shouldBeInSchool = (childState["shouldBeInSchool"] == "true");
       bool inSchool = (childState["inSchool"] == "true");
