@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
 import 'package:wbudy_apka/model/LatLong.dart';
 
 class ConfigurationService{
@@ -10,130 +10,66 @@ class ConfigurationService{
     }
     return _instance;
   }
-  ConfigurationService._constructor() {
-    _prefsLoaded = false;
-  }
-
+  ConfigurationService._constructor() {}
   static String get OwnerParent { return "Parent"; }
   static String get OwnerChild { return "Child"; }
-
-  bool _prefsLoaded;
-  SharedPreferences _prefs;
-
-  Future reloadPreferences() async {
-    this._prefs = await SharedPreferences.getInstance();
-    this._prefsLoaded = true;
-  }
+  final String _getSchoolPositionMethod = "getSchoolPosition";
+  final String _setSchoolPositionMethod = "setSchoolPosition";
+  final String _isAppConfiguredMethod = "isAppConfigured";
+  final String _setAppConfiguredMethod = "setAppConfigured";
+  final String _getDeviceOwnerMethod = "getDeviceOwner";
+  final String _setDeviceOwnerMethod = "setDeviceOwner";
+  final String _getSchoolStartAtMethod = "getSchoolStartAt";
+  final String _setSchoolStartAtMethod = "setSchoolStartAt";
+  final String _getSchoolEndAtMethod = "getSchoolEndAt";
+  final String _setSchoolEndAtMethod = "setSchoolEndAt";
+  final MethodChannel _platform = const MethodChannel("samples.flutter.dev/configuration");
 
   Future<bool> isAppConfigured() async {
-    if(!_prefsLoaded) {
-      await reloadPreferences();
-    }
-    var key = "appConfigured";
-    if (_prefs.containsKey(key)) {
-      return _prefs.getBool(key);
-    } else {
-      _prefs.setBool(key, false);
-      return false;
-    }
+    return await _platform.invokeMethod(_isAppConfiguredMethod);
   }
 
   Future setAppConfigured(bool configured) async {
-    if(!_prefsLoaded) {
-      await reloadPreferences();
-    }
-    var key = "appConfigured";
-    _prefs.setBool(key, configured);
+    await _platform.invokeMethod(_setAppConfiguredMethod,{'configured':configured});
   }
 
-  Future<String> getDeviceOwner() async {
-    if(!_prefsLoaded) {
-      await reloadPreferences();
-    }
-    var key = "deviceOwner";
-    if (_prefs.containsKey(key)) {
-      return _prefs.getString(key);
-    }
-    throw(key + "is not configured");
-  }
-
-  Future setDeviceOwner(String deviceOwner) async {
-    if(!_prefsLoaded) {
-      await reloadPreferences();
-    }
-    var key = "deviceOwner";
-    _prefs.setString(key, deviceOwner);
-  }
-
-  Future<TimeOfDay> getSchoolStartAt() async {
-    if(!_prefsLoaded) {
-      await reloadPreferences();
-    }
-    var keyH = "hourStart";
-    var keyM = "minuteStart";
-    if(_prefs.containsKey(keyH) && _prefs.containsKey(keyM)) {
-      var h = _prefs.getInt(keyH);
-      var m = _prefs.getInt(keyM);
-      return TimeOfDay(hour: h, minute: m);
-    }
-    throw("Value not exist");
-  }
-
-  Future setSchoolStartAt(TimeOfDay timeOfDay) async {
-    if(!_prefsLoaded) {
-      await reloadPreferences();
-    }
-    var keyH = "hourStart";
-    var keyM = "minuteStart";
-    _prefs.setInt(keyH, timeOfDay.hour);
-    _prefs.setInt(keyM, timeOfDay.minute);
-  }
-
-  Future<TimeOfDay> getSchoolEndAt() async {
-    if(!_prefsLoaded) {
-      await reloadPreferences();
-    }
-    var keyH = "hourEnd";
-    var keyM = "minuteEnd";
-    if(_prefs.containsKey(keyH) && _prefs.containsKey(keyM)) {
-      var h = _prefs.getInt(keyH);
-      var m = _prefs.getInt(keyM);
-      return TimeOfDay(hour: h, minute: m);
-    }
-    throw("Value not exist");
-  }
-
-  Future setSchoolEndAt(TimeOfDay timeOfDay) async {
-    if(!_prefsLoaded) {
-      await reloadPreferences();
-    }
-    var keyH = "hourEnd";
-    var keyM = "minuteEnd";
-    _prefs.setInt(keyH, timeOfDay.hour);
-    _prefs.setInt(keyM, timeOfDay.minute);
-  }
-
-  Future<LatLong> getSchoolLocation() async {
-    if(!_prefsLoaded) {
-      await reloadPreferences();
-    }
-    var keyLat = "latSchool";
-    var keyLong = "longSchool";
-    if(_prefs.containsKey(keyLat) && _prefs.containsKey(keyLong)) {
-      var lat = _prefs.getDouble(keyLat);
-      var long = _prefs.getDouble(keyLong);
-      return new LatLong(lat, long);
-    }
-    throw("Value not exist");
+  Future<LatLong> getSchoolPosition() async {
+    var result = await _platform.invokeMethod(_getSchoolPositionMethod);
+    return LatLong(result['lat'],result['long']);
   }
 
   Future setSchoolLocation(LatLong latLong) async {
-    if(!_prefsLoaded) {
-      await reloadPreferences();
-    }
-    var keyLat = "latSchool";
-    var keyLong = "longSchool";
-    _prefs.setDouble(keyLat, latLong.latitude);
-    _prefs.setDouble(keyLong, latLong.longtitude);
+    await _platform.invokeMethod(_setSchoolPositionMethod,{'lat':latLong.latitude, "long": latLong.longtitude});
   }
+
+  Future<String> getDeviceOwner() async {
+    return await _platform.invokeMethod(_getDeviceOwnerMethod);
+  }
+
+  Future setDeviceOwner(String deviceOwner) async {
+    await _platform.invokeMethod(_setDeviceOwnerMethod,{"deviceOwner":deviceOwner});
+  }
+
+  Future<TimeOfDay> getSchoolStartAt() async {
+    var result = await _platform.invokeMethod(_getSchoolStartAtMethod);
+    var h = result['h'];
+    var m = result['m'];
+    return TimeOfDay(hour: h, minute: m);
+  }
+
+  Future setSchoolStartAt(TimeOfDay timeOfDay) async {
+    await _platform.invokeMethod(_setSchoolStartAtMethod,{"h":timeOfDay.hour,"m":timeOfDay.minute});
+  }
+
+  Future<TimeOfDay> getSchoolEndAt() async {
+    var result = await _platform.invokeMethod(_getSchoolEndAtMethod);
+    var h = result['h'];
+    var m = result['m'];
+    return TimeOfDay(hour: h, minute: m);
+  }
+
+  Future setSchoolEndAt(TimeOfDay timeOfDay) async {
+    await _platform.invokeMethod(_setSchoolEndAtMethod,{"h":timeOfDay.hour,"m":timeOfDay.minute});
+  }
+
 }

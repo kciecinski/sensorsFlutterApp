@@ -24,12 +24,13 @@ class ChildStateService {
     if(await _locationService.isPositionAvailable() && await _configurationService.getDeviceOwner() == ConfigurationService.OwnerChild) {
       var result = await _locationService.getPosition();
       LatLong currentPos = result['latlong'];
-      LatLong schoolPos = await _configurationService.getSchoolLocation();
+      LatLong schoolPos = await _configurationService.getSchoolPosition();
       return schoolPos.distanceInKilometers(currentPos)*1000;
     }
     return 0;
   }
   Future<HashMap<String,String>> getChildState() async {
+    _configurationService.getSchoolPosition();
     var output = HashMap<String,String>();
     Map result = await _platform.invokeMethod(_getChildStateMethod);
     result.forEach((key, value) {output.putIfAbsent(key, () => value);});

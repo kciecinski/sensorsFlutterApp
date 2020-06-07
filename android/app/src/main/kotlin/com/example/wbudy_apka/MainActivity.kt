@@ -9,8 +9,11 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.IBinder
+import android.util.Log
 import androidx.annotation.NonNull
 import com.example.wbudy_apka.location.Position
+import com.example.wbudy_apka.model.LatLong
+import com.example.wbudy_apka.model.TimeOfDay
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -20,11 +23,14 @@ class MainActivity: FlutterActivity() {
     private val SENSORS_CHANNEL = "samples.flutter.dev/sensors"
     private val GPS_CHANNEL = "samples.flutter.dev/gps"
     private val OTHER_CHANNEL = "samples.flutter.dev/other"
+    private val CONFIGURATION_CHANNEL = "samples.flutter.dev/configuration"
     
-    val gyroListener = PositionAndMotionListener();
-    val accListener = PositionAndMotionListener();
-    val magneticListener = PositionAndMotionListener();
-    val lightListener = EnvirementalListener();
+    val gyroListener = PositionAndMotionListener()
+    val accListener = PositionAndMotionListener()
+    val magneticListener = PositionAndMotionListener()
+    val lightListener = EnvirementalListener()
+
+    private lateinit var configuration: Configuration
 
     private lateinit var wbudyServiceIntent: Intent
     private lateinit var wbudyService: WbudyService
@@ -38,6 +44,11 @@ class MainActivity: FlutterActivity() {
         override fun onServiceDisconnected(arg0: ComponentName) {
             wbudyServiceConnected = false
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        configuration = Configuration(this.applicationContext)
     }
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
@@ -70,6 +81,89 @@ class MainActivity: FlutterActivity() {
             call, result ->
             when(call.method) {
                 "getChildState" -> getChildState(result)
+                else -> {
+                    result.notImplemented()
+                }
+            }
+        }
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger,CONFIGURATION_CHANNEL).setMethodCallHandler {
+            call, result ->
+            when(call.method) {
+                "getSchoolPosition" -> {
+                    val x = HashMap<String,Double>()
+                    val schoolPosition = configuration.getSchoolPosition()
+                    x.put("lat",schoolPosition.latitude)
+                    x.put("long",schoolPosition.longtitude)
+                    result.success(x)
+                }
+                "setSchoolPosition" -> {
+                    val lat = call.argument<Double>("lat")
+                    val long = call.argument<Double>("long")
+                    if(lat != null && long != null){
+                        configuration.setSchoolPosition(LatLong(lat,long))
+                        result.success(true)
+                    } else {
+                        result.success(false)
+                    }
+                }
+                "isAppConfigured" -> {
+                    result.success(configuration.isAppConfigured())
+                }
+                "setAppConfigured" -> {
+                    val configured = call.argument<Boolean>("configured")
+                    if(configured != null) {
+                        configuration.setAppConfigured(configured)
+                        result.success(true)
+                    } else {
+                        result.success(false)
+                    }
+                }
+                "getDeviceOwner" -> {
+                    result.success(configuration.getDeviceOwner())
+                }
+                "setDeviceOwner" -> {
+                    val deviceOwner = call.argument<String>("deviceOwner")
+                    if(deviceOwner != null) {
+                        configuration.setDeviceOwner(deviceOwner)
+                        result.success(true)
+                    } else {
+                        result.success(false)
+                    }
+                }
+                "getSchoolStartAt" -> {
+                    val x = HashMap<String,Int>()
+                    val time = configuration.getSchoolStartAt()
+                    x.put("h",time.hours)
+                    x.put("m",time.minutes)
+                    result.success(x)
+                }
+                "setSchoolStartAt" -> {
+                    val h = call.argument<Int>("h")
+                    val m = call.argument<Int>("m")
+                    if(h != null && m != null) {
+                        configuration.setSchoolStartAt(TimeOfDay(h,m))
+                        result.success(true)
+                    } else {
+                        result.success(false)
+                    }
+                }
+                "getSchoolEndAt" -> {
+                    val x = HashMap<String,Int>()
+                    val time = configuration.getSchoolEndAt()
+                    x.put("h",time.hours)
+                    x.put("m",time.minutes)
+                    result.success(x)
+                }
+                "setSchoolEndAt" -> {
+                    val h = call.argument<Int>("h")
+                    val m = call.argument<Int>("m")
+                    if(h != null && m != null) {
+                        configuration.setSchoolEndAt(TimeOfDay(h,m))
+                        result.success(true)
+                    } else {
+                        result.success(false)
+                    }
+                }
                 else -> {
                     result.notImplemented()
                 }
