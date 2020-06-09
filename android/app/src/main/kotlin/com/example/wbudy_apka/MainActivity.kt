@@ -38,6 +38,7 @@ class MainActivity: FlutterActivity() {
     override fun onStart() {
         super.onStart()
         configuration = Configuration(this.applicationContext)
+        wbudyServiceIntent = Intent(this,WbudyService::class.java)
     }
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
@@ -45,9 +46,6 @@ class MainActivity: FlutterActivity() {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, SENSORS_CHANNEL).setMethodCallHandler {
             call, result ->
             when (call.method) {
-                "isAvailable" -> {
-                    result.success(wbudyServiceConnected)
-                }
                 "getGyroscopeValues" -> checkResultFor(wbudyService.gyroListener.values, result)
                 "getAccelerometrValues" -> checkResultFor(wbudyService.accListener.values, result)
                 "getMagneticFieldValues" -> checkResultFor(wbudyService.magneticListener.values, result)
@@ -60,11 +58,6 @@ class MainActivity: FlutterActivity() {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, GPS_CHANNEL).setMethodCallHandler {
             call, result ->
             when(call.method) {
-                "startGps" -> {
-                    wbudyServiceIntent = Intent(this,WbudyService::class.java)
-                    startService(wbudyServiceIntent)
-                    bindService(wbudyServiceIntent,wbudyServiceConnection,Context.BIND_AUTO_CREATE)
-                }
                 "getPosition" -> {
                     var positionHashMap: HashMap<String,String> = HashMap<String,String>()
                     if (!wbudyServiceConnected){
@@ -96,6 +89,14 @@ class MainActivity: FlutterActivity() {
             when(call.method) {
                 "isAvailable" -> {
                     result.success(wbudyServiceConnected)
+                }
+                "startService" -> {
+                    startWbudyService();
+                    result.success(0);
+                }
+                "stopService" -> {
+                    stopWbudyService();
+                    result.success(0);
                 }
                 "getChildState" -> {
                     val childState = wbudyService.getChildState()
@@ -195,6 +196,15 @@ class MainActivity: FlutterActivity() {
         }
     }
 
+    private fun startWbudyService() {
+        startService(wbudyServiceIntent)
+        bindService(wbudyServiceIntent,wbudyServiceConnection,Context.BIND_AUTO_CREATE)
+    }
+    private fun stopWbudyService() {
+        unbindService(wbudyServiceConnection)
+        stopService(wbudyServiceIntent)
+    }
+
     private fun checkResultFor(values: HashMap<String,Double>, result:MethodChannel.Result): Void? {
       if (values != {}) {
         result.success(values);
@@ -202,6 +212,11 @@ class MainActivity: FlutterActivity() {
         result.error("UNAVAILABLE", "Sensor not available.", null);
       }
       return null;
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unbindService(wbudyServiceConnection)
     }
 }
 

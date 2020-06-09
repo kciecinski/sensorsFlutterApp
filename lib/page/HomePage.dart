@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wbudy_apka/service/LocationService.dart';
+import 'package:wbudy_apka/service/OtherService.dart';
 import 'package:wbudy_apka/service/PermissionService.dart';
 import 'package:wbudy_apka/widgets/ChildStateDisplay.dart';
 import 'package:wbudy_apka/widgets/DrawerMenuDisplay.dart';
@@ -25,8 +26,8 @@ class _HomePageState extends State<HomePage> {
     var permissionsService = PermissionService();
     bool granted = await permissionsService.askForGPSPermissions();
     if(granted) {
-      var locationService = new LocationService();
-      locationService.startGps();
+      var otherService = new OtherService();
+      otherService.startService();
     }
   }
 

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wbudy_apka/model/LatLong.dart';
 
+import 'OtherService.dart';
+
 class ConfigurationService{
   static ConfigurationService _instance = null;
   factory ConfigurationService() {

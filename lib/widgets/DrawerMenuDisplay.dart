@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:wbudy_apka/service/OtherService.dart';
 
 class DrawerMenuDisplay extends StatefulWidget{
   DrawerMenuDisplay();
@@ -13,6 +14,7 @@ class DrawerMenuDisplay extends StatefulWidget{
 
 class _DrawerMenuDisplayState extends State<DrawerMenuDisplay> {
 
+  OtherService _otherService = OtherService();
   @override
   build(BuildContext context) {
     return Drawer(
@@ -35,6 +37,13 @@ class _DrawerMenuDisplayState extends State<DrawerMenuDisplay> {
               title: Text("GPS"),
               onTap: () {
                 Navigator.pushNamed(context, '/infoGps');
+              }
+          ),
+          ListTile(
+              title: Text("Zamknij aplikację i procesy w tle"),
+              onTap: () {
+                _otherService.stopService();
+                SystemNavigator.pop();
               }
           )
         ]

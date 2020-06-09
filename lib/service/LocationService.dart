@@ -4,6 +4,8 @@ import 'dart:collection';
 import 'package:flutter/services.dart';
 import 'package:wbudy_apka/model/LatLong.dart';
 
+import 'OtherService.dart';
+
 class LocationService {
   static LocationService _instance = null;
   factory LocationService() {
@@ -13,15 +15,12 @@ class LocationService {
     return _instance;
   }
   LocationService._constructor() {}
+  OtherService _otherService = OtherService();
   static const String _isAvailableMethod = "isAvailable";
   static const String _getPositionMethod = "getPosition";
   static const String _startGpsMethod = "startGps";
   static const String _isNMEAWorksMethod = "isNMEAWorks";
   static const MethodChannel _platform = const MethodChannel('samples.flutter.dev/gps');
-
-  Future startGps() async {
-    await _platform.invokeMethod(_startGpsMethod);
-  }
 
   Future<HashMap<String,dynamic>> getPosition() async {
     Map result = await _platform.invokeMethod(_getPositionMethod);
@@ -47,7 +46,7 @@ class LocationService {
   }
 
   Future<bool> isAvailable() async {
-    return await _platform.invokeMethod(_isAvailableMethod);
+    return await _otherService.isAvailable();
   }
 
   Future<bool> isNMEAWorks() async {
