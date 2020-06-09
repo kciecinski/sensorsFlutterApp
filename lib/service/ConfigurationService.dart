@@ -11,19 +11,19 @@ class ConfigurationService{
     return _instance;
   }
   ConfigurationService._constructor() {}
-  static String get OwnerParent { return "Parent"; }
-  static String get OwnerChild { return "Child"; }
-  final String _getSchoolPositionMethod = "getSchoolPosition";
-  final String _setSchoolPositionMethod = "setSchoolPosition";
-  final String _isAppConfiguredMethod = "isAppConfigured";
-  final String _setAppConfiguredMethod = "setAppConfigured";
-  final String _getDeviceOwnerMethod = "getDeviceOwner";
-  final String _setDeviceOwnerMethod = "setDeviceOwner";
-  final String _getSchoolStartAtMethod = "getSchoolStartAt";
-  final String _setSchoolStartAtMethod = "setSchoolStartAt";
-  final String _getSchoolEndAtMethod = "getSchoolEndAt";
-  final String _setSchoolEndAtMethod = "setSchoolEndAt";
-  final MethodChannel _platform = const MethodChannel("samples.flutter.dev/configuration");
+  static const String OwnerParent = "Parent";
+  static const String OwnerChild = "Child";
+  static const String _getSchoolPositionMethod = "getSchoolPosition";
+  static const String _setSchoolPositionMethod = "setSchoolPosition";
+  static const String _isAppConfiguredMethod = "isAppConfigured";
+  static const String _setAppConfiguredMethod = "setAppConfigured";
+  static const String _getDeviceOwnerMethod = "getDeviceOwner";
+  static const String _setDeviceOwnerMethod = "setDeviceOwner";
+  static const String _getSchoolStartAtMethod = "getSchoolStartAt";
+  static const String _setSchoolStartAtMethod = "setSchoolStartAt";
+  static const String _getSchoolEndAtMethod = "getSchoolEndAt";
+  static const String _setSchoolEndAtMethod = "setSchoolEndAt";
+  static const MethodChannel _platform = const MethodChannel("samples.flutter.dev/configuration");
 
   Future<bool> isAppConfigured() async {
     return await _platform.invokeMethod(_isAppConfiguredMethod);

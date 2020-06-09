@@ -17,8 +17,8 @@ class ChildStateService {
   ConfigurationService _configurationService = ConfigurationService();
   LocationService _locationService = LocationService();
   ChildStateService._constructor() {}
-  final String _getChildStateMethod = "getChildState";
-  final MethodChannel _platform = const MethodChannel('samples.flutter.dev/other');
+  static const String _getChildStateMethod = "getChildState";
+  static const MethodChannel _platform = const MethodChannel('samples.flutter.dev/other');
 
   Future<double> distanceToSchool() async {
     if(await _locationService.isPositionAvailable() && await _configurationService.getDeviceOwner() == ConfigurationService.OwnerChild) {

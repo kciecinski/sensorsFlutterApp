@@ -27,10 +27,6 @@ class ChildState(private var context: Context) {
     }
     fun isShouldBeInSchool(): Boolean {
         val now = TimeOfDay.now()
-        Log.i("isShouldBeInSchool","now: "+now)
-        Log.i("isShouldBeInSchool","start: "+_configuration.getSchoolStartAt())
-        Log.i("isShouldBeInSchool","end: "+_configuration.getSchoolEndAt())
-
         return now.isInRange(_configuration.getSchoolStartAt(),_configuration.getSchoolEndAt())
     }
     fun isInSchool(): Boolean {

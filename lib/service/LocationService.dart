@@ -13,11 +13,11 @@ class LocationService {
     return _instance;
   }
   LocationService._constructor() {}
-  final String _isPositionAvailableMethod = "isPositionAvailable";
-  final String _getPositionMethod = "getPosition";
-  final String _startGpsMethod = "startGps";
-  final String _isNMEAWorksMethod = "isNMEAWorks";
-  final MethodChannel _platform = const MethodChannel('samples.flutter.dev/gps');
+  static const String _isPositionAvailableMethod = "isPositionAvailable";
+  static const String _getPositionMethod = "getPosition";
+  static const String _startGpsMethod = "startGps";
+  static const String _isNMEAWorksMethod = "isNMEAWorks";
+  static const MethodChannel _platform = const MethodChannel('samples.flutter.dev/gps');
 
   Future startGps() async {
     await _platform.invokeMethod(_startGpsMethod);
