@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:wbudy_apka/page/FirstStartPage.dart';
 import 'package:wbudy_apka/page/HomePage.dart';
 import 'package:wbudy_apka/page/InfoGPSPage.dart';
-import 'package:wbudy_apka/page/MyHomePage.dart';
+import 'package:wbudy_apka/page/SensorsPage.dart';
 import 'package:wbudy_apka/page/SplashPage.dart';
 
 void main() => runApp(MyApp());
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       routes: <String,WidgetBuilder> {
         '/splashPage': (BuildContext context) => SplashPage(),
         '/home': (BuildContext context) => HomePage(),
-        '/myhome': (BuildContext context) => MyHomePage(),
+        '/sensors': (BuildContext context) => SensorsPage(),
         '/firstStart': (BuildContext context) => FirstStartPage(),
         '/infoGps': (BuildContext context) => InfoGPSPage()
       }

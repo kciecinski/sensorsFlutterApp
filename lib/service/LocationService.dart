@@ -13,7 +13,7 @@ class LocationService {
     return _instance;
   }
   LocationService._constructor() {}
-  static const String _isPositionAvailableMethod = "isPositionAvailable";
+  static const String _isAvailableMethod = "isAvailable";
   static const String _getPositionMethod = "getPosition";
   static const String _startGpsMethod = "startGps";
   static const String _isNMEAWorksMethod = "isNMEAWorks";
@@ -46,8 +46,8 @@ class LocationService {
     return output;
   }
 
-  Future<bool> isPositionAvailable() async {
-    return await _platform.invokeMethod(_isPositionAvailableMethod);
+  Future<bool> isAvailable() async {
+    return await _platform.invokeMethod(_isAvailableMethod);
   }
 
   Future<bool> isNMEAWorks() async {

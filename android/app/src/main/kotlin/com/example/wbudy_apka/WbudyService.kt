@@ -7,6 +7,8 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import android.location.Criteria
 import android.location.Location
 import android.location.LocationManager
@@ -14,6 +16,8 @@ import android.os.Binder
 import android.os.IBinder
 import com.example.wbudy_apka.location.*
 import com.example.wbudy_apka.model.LatLong
+import com.example.wbudy_apka.sensors.EnvirementalListener
+import com.example.wbudy_apka.sensors.PositionAndMotionListener
 import io.flutter.Log
 
 class WbudyService : Service(), NMEAListener.NMEAEventListener, AndroidLocationListener.AndroidLocationEventListener, PositionListener {
@@ -61,6 +65,17 @@ class WbudyService : Service(), NMEAListener.NMEAEventListener, AndroidLocationL
     private lateinit var nmeaListener: NMEAListener
     private lateinit var nmeaDecoder: NMEADecoder
     private var nmeaCommunicationWorks: Boolean = false;
+    //For sensors
+    private lateinit var sensorManager: SensorManager
+    private val _gyroListener = PositionAndMotionListener()
+    private val _accListener = PositionAndMotionListener()
+    private val _magneticListener = PositionAndMotionListener()
+    private val _lightListener = EnvirementalListener()
+    val gyroListener: PositionAndMotionListener get() { return _gyroListener }
+    val accListener: PositionAndMotionListener get() { return _accListener }
+    val magneticListener: PositionAndMotionListener get() { return _magneticListener }
+    val lightListener: EnvirementalListener get() { return _lightListener }
+
     //For calculate child state
     private lateinit var childState: ChildState;
 
@@ -77,6 +92,12 @@ class WbudyService : Service(), NMEAListener.NMEAEventListener, AndroidLocationL
         androidLocationListener.setAndroidLocationListener(this)
         nmeaListener = NMEAListener(this@WbudyService)
         nmeaListener.setNMEAListener(this)
+        //For sensors
+        sensorManager =  getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        sensorManager.registerListener(accListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL)
+        sensorManager.registerListener(gyroListener, sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_NORMAL)
+        sensorManager.registerListener(magneticListener, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_NORMAL)
+        sensorManager.registerListener(lightListener, sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT), SensorManager.SENSOR_DELAY_NORMAL)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -92,7 +113,10 @@ class WbudyService : Service(), NMEAListener.NMEAEventListener, AndroidLocationL
         //For location
         if (nmeaListener.isListening) nmeaListener.stopListen()
         if (!androidLocationListener.isListening) androidLocationListener.stopListen()
-
+        sensorManager.unregisterListener(accListener)
+        sensorManager.unregisterListener(gyroListener)
+        sensorManager.unregisterListener(magneticListener)
+        sensorManager.unregisterListener(lightListener)
         super.onDestroy()
     }
 

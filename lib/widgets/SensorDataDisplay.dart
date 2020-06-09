@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:wbudy_apka/service/SensorService.dart';
 
 class SesnsorDataDisplay extends StatefulWidget {
   
-SesnsorDataDisplay({this.sensorMethod, this.sensorName, this.onSnackbar, this.onWriteLog});
+SesnsorDataDisplay({this.sensorName, this.onSnackbar, this.onWriteLog});
 
-  final String sensorMethod;
   final String sensorName;
   final Function onSnackbar;
   final Function onWriteLog;
@@ -19,7 +19,7 @@ SesnsorDataDisplay({this.sensorMethod, this.sensorName, this.onSnackbar, this.on
 class _SesnsorDataDisplayState extends State<SesnsorDataDisplay> {
   Timer _everySecond;
 
-  static const platform = const MethodChannel('samples.flutter.dev/sensors');
+  SensorService sensorService = SensorService();
   Map _values = {};
   bool isChanged = false;
 
@@ -29,7 +29,7 @@ class _SesnsorDataDisplayState extends State<SesnsorDataDisplay> {
     Map result = {};
     _everySecond = Timer.periodic(Duration(seconds: 1), (Timer t) async {
       try {
-        result = await platform.invokeMethod(widget.sensorMethod);
+        result = await sensorService.getValues(widget.sensorName);
       } on PlatformException catch (e) {
         print(e);
       }
@@ -56,7 +56,7 @@ class _SesnsorDataDisplayState extends State<SesnsorDataDisplay> {
   String buildLog(String text) {
     return "${DateTime.now()} ${text} \n";
   }
-
+/*
   Future<void> checkLight() async {
     if(double.parse(_values['value']) >= 4.0) {
       if (isChanged == false) {
@@ -70,15 +70,22 @@ class _SesnsorDataDisplayState extends State<SesnsorDataDisplay> {
       }
     }
   }
+*/
+  @override
+  void dispose() {
+    super.dispose();
+    _everySecond.cancel();
+  }
 
   @override
   Widget build(BuildContext context) {
-    if(widget.sensorName == "Light") {
+    /*if(widget.sensorName == "Light") {
       checkLight();
       return ListTile(
         title: double.parse(_values['value']) >= 4.0 ? Text("Schowaj telefon urwisie") : Text("Telefon schowany"),
       );
     }
+    */
     return ListTile(
       title: Text(widget.sensorName),
       subtitle: Text(_values.toString()),

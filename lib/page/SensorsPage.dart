@@ -2,26 +2,22 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:wbudy_apka/service/SensorService.dart';
 import 'package:wbudy_apka/widgets/SensorDataDisplay.dart';
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key}) : super(key: key);
+class SensorsPage extends StatefulWidget {
+  SensorsPage({Key key}) : super(key: key);
 
   final String title = "Sensors";
 
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _SensorsPageState createState() => _SensorsPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _SensorsPageState extends State<SensorsPage> {
 
-  List<Map> _sensorsInfo = [
-    {"Name": "Gyroscope", "Method": "getGyroscopeValues"},
-    {"Name": "Acceleromert", "Method": "getAccelerometrValues"},
-    {"Name": "MagneticField", "Method": "getMagneticFieldValues"},
-    {"Name": "Light", "Method": "getLightValues"}
-  ];
+  SensorService sensorService = SensorService();
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   writeLog(String logText) async {
@@ -49,7 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children:[
             ListView(
                 shrinkWrap: true,
-                children: _sensorsInfo.map((sensorInfo) => SesnsorDataDisplay(sensorMethod: sensorInfo['Method'], sensorName: sensorInfo['Name'], onWriteLog: writeLog, onSnackbar: onSnackbar,) ).toList()
+                children: sensorService.sensorNames.map((sensorName) => SesnsorDataDisplay(sensorName: sensorName, onWriteLog: writeLog, onSnackbar: onSnackbar,) ).toList()
             )
           ]
       )

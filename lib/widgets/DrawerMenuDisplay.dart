@@ -27,18 +27,14 @@ class _DrawerMenuDisplayState extends State<DrawerMenuDisplay> {
           ),
           ListTile(
             title: Text("Sensory"),
-            onTap: () {},
+            onTap: () {
+              Navigator.pushNamed(context, '/sensors');
+            },
           ),
           ListTile(
               title: Text("GPS"),
               onTap: () {
                 Navigator.pushNamed(context, '/infoGps');
-              }
-          ),
-          ListTile(
-              title: Text("MyHomePage tymczasowo"),
-              onTap: () {
-                Navigator.pushNamed(context, '/myhome');
               }
           )
         ]

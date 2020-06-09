@@ -22,6 +22,10 @@ class SensorService {
   ];
   static const _platform = const MethodChannel('samples.flutter.dev/sensors');
 
+  List<String> get sensorNames {
+    return _sensorsInfo.map<String>((info) {return info['Name'];}).toList();
+  }
+
   Future<Map> getValues(String sensorName) async {
     var sensorInfo = _sensorsInfo.firstWhere((element) => element['Name'] == sensorName);
     if(!sensorInfo.containsKey("Method")){

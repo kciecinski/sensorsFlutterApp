@@ -21,7 +21,7 @@ class ChildStateService {
   static const MethodChannel _platform = const MethodChannel('samples.flutter.dev/other');
 
   Future<double> distanceToSchool() async {
-    if(await _locationService.isPositionAvailable() && await _configurationService.getDeviceOwner() == ConfigurationService.OwnerChild) {
+    if(await _locationService.isAvailable() && await _configurationService.getDeviceOwner() == ConfigurationService.OwnerChild) {
       var result = await _locationService.getPosition();
       LatLong currentPos = result['latlong'];
       LatLong schoolPos = await _configurationService.getSchoolPosition();
