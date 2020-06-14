@@ -25,6 +25,14 @@ class ConfigurationService{
   static const String _setSchoolStartAtMethod = "setSchoolStartAt";
   static const String _getSchoolEndAtMethod = "getSchoolEndAt";
   static const String _setSchoolEndAtMethod = "setSchoolEndAt";
+  static const String _isHaveEtuiMethod = "isHaveEtui";
+  static const String _setHaveEtuiMethod = "setHaveEtui";
+  static const String _isConfiguredEtuiMethod = "isConfiguredEtui";
+  static const String _setConfiguredEtuiMethod = "setConfiguredEtui";
+
+  static const String _isConfiguredSchoolMethod = "isConfiguredSchool";
+  static const String _setConfiguredSchoolMethod = "setConfiguredSchool";
+
   static const MethodChannel _platform = const MethodChannel("samples.flutter.dev/configuration");
 
   Future<bool> isAppConfigured() async {
@@ -32,6 +40,7 @@ class ConfigurationService{
   }
 
   Future setAppConfigured(bool configured) async {
+    print("setAppConfigured");
     await _platform.invokeMethod(_setAppConfiguredMethod,{'configured':configured});
   }
 
@@ -41,6 +50,7 @@ class ConfigurationService{
   }
 
   Future setSchoolLocation(LatLong latLong) async {
+    print("setSchoolLocation");
     await _platform.invokeMethod(_setSchoolPositionMethod,{'lat':latLong.latitude, "long": latLong.longtitude});
   }
 
@@ -49,6 +59,7 @@ class ConfigurationService{
   }
 
   Future setDeviceOwner(String deviceOwner) async {
+    print("setDeviceOwner");
     await _platform.invokeMethod(_setDeviceOwnerMethod,{"deviceOwner":deviceOwner});
   }
 
@@ -60,6 +71,7 @@ class ConfigurationService{
   }
 
   Future setSchoolStartAt(TimeOfDay timeOfDay) async {
+    print("setSchoolStartAt");
     await _platform.invokeMethod(_setSchoolStartAtMethod,{"h":timeOfDay.hour,"m":timeOfDay.minute});
   }
 
@@ -71,7 +83,38 @@ class ConfigurationService{
   }
 
   Future setSchoolEndAt(TimeOfDay timeOfDay) async {
+    print("setSchoolEndAt");
     await _platform.invokeMethod(_setSchoolEndAtMethod,{"h":timeOfDay.hour,"m":timeOfDay.minute});
   }
 
+  Future<bool> isHaveEtui() async {
+    return await _platform.invokeMethod(_isHaveEtuiMethod);
+  }
+
+  Future setHaveEtui(bool value) async {
+    print("setHaveEtui");
+    await _platform.invokeMethod(_setHaveEtuiMethod,{"value":value});
+  }
+
+  Future<bool> isConfiguredAll() async {
+    var etui = await isConfiguredEtui();
+    return etui;
+  }
+
+  Future<bool> isConfiguredEtui() async {
+    return await _platform.invokeMethod(_isConfiguredEtuiMethod);
+  }
+
+  Future setConfiguredEtui(bool value) async {
+    print("setConfiguredEtui");
+    await _platform.invokeMethod(_setConfiguredEtuiMethod,{"value":value});
+  }
+  Future<bool> isConfiguredSchool() async {
+    return await _platform.invokeMethod(_isConfiguredSchoolMethod);
+  }
+
+  Future setConfiguredSchool(bool value) async {
+    print("setConfiguredSchool");
+    await _platform.invokeMethod(_setConfiguredSchoolMethod,{"value":value});
+  }
 }

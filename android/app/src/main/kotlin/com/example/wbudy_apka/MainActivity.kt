@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import android.util.Log
 import androidx.annotation.NonNull
 import com.example.wbudy_apka.model.LatLong
 import com.example.wbudy_apka.model.TimeOfDay
@@ -18,8 +19,10 @@ class MainActivity: FlutterActivity() {
     private val GPS_CHANNEL = "samples.flutter.dev/gps"
     private val OTHER_CHANNEL = "samples.flutter.dev/other"
     private val CONFIGURATION_CHANNEL = "samples.flutter.dev/configuration"
+    private val CALIBRATE_CHANNEL = "samples.fultter.dev/calibrate"
 
     private lateinit var configuration: Configuration
+    private lateinit var calibrate: Calibrate
 
     private lateinit var wbudyServiceIntent: Intent
     private lateinit var wbudyService: WbudyService
@@ -37,6 +40,7 @@ class MainActivity: FlutterActivity() {
 
     override fun onStart() {
         super.onStart()
+        calibrate = Calibrate(this.applicationContext)
         configuration = Configuration(this.applicationContext)
         wbudyServiceIntent = Intent(this,WbudyService::class.java)
     }
@@ -46,10 +50,10 @@ class MainActivity: FlutterActivity() {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, SENSORS_CHANNEL).setMethodCallHandler {
             call, result ->
             when (call.method) {
-                "getGyroscopeValues" -> checkResultFor(wbudyService.gyroListener.values, result)
-                "getAccelerometrValues" -> checkResultFor(wbudyService.accListener.values, result)
-                "getMagneticFieldValues" -> checkResultFor(wbudyService.magneticListener.values, result)
-                "getLightValues" -> checkResultFor(wbudyService.lightListener.values, result)
+                "getGyroscopeValues" -> checkResultFor(wbudyService.sensors.gyroListener.values, result)
+                "getAccelerometrValues" -> checkResultFor(wbudyService.sensors.accListener.values, result)
+                "getMagneticFieldValues" -> checkResultFor(wbudyService.sensors.magneticListener.values, result)
+                "getLightValues" -> checkResultFor(wbudyService.sensors.lightListener.values, result)
                 else -> {
                     result.notImplemented();
                 }
@@ -63,7 +67,7 @@ class MainActivity: FlutterActivity() {
                     if (!wbudyServiceConnected){
                         positionHashMap.put("isPositionAvailable",wbudyServiceConnected.toString())
                     } else {
-                        val position = wbudyService.lastPosition
+                        val position = wbudyService.location.lastPosition
                         positionHashMap.put("longtitude", position.longitude.longitude.toString())
                         positionHashMap.put("latitude", position.latitude.latitude.toString())
                         positionHashMap.put("time",position.datetime.toString())
@@ -77,7 +81,7 @@ class MainActivity: FlutterActivity() {
                     result.success(wbudyServiceConnected)
                 }
                 "isNMEAWorks" -> {
-                    result.success(wbudyService.isNMEAWorks())
+                    result.success(wbudyService.location.isNMEAWorks)
                 }
                 else -> {
                     result.notImplemented();
@@ -99,11 +103,12 @@ class MainActivity: FlutterActivity() {
                     result.success(0);
                 }
                 "getChildState" -> {
-                    val childState = wbudyService.getChildState()
+                    val childState = wbudyService.childState
                     val hashMap: HashMap<String,String> =  HashMap<String,String>()
-                    hashMap.put("distanceToSchool",childState.getDistanceToSchool().toString())
-                    hashMap.put("shouldBeInSchool",childState.isShouldBeInSchool().toString())
-                    hashMap.put("inSchool",childState.isInSchool().toString())
+                    hashMap.put("distanceToSchool",wbudyService.childState.getDistanceToSchool().toString())
+                    hashMap.put("shouldBeInSchool",wbudyService.childState.isShouldBeInSchool().toString())
+                    hashMap.put("inSchool",wbudyService.childState.isInSchool().toString())
+                    hashMap.put("isWithoutEtui",wbudyService.childState.isWithoutEtui().toString())
                     result.success(hashMap)
                 }
                 else -> {
@@ -189,6 +194,53 @@ class MainActivity: FlutterActivity() {
                         result.success(false)
                     }
                 }
+                "isHaveEtui" -> { result.success(configuration.isHaveEtui()) }
+                "setHaveEtui" -> {
+                    val value = call.argument<Boolean>("value")
+                    if(value != null) {
+                        configuration.setHaveEtui(value)
+                        result.success(true)
+                    } else {
+                        result.success(false)
+                    }
+                }
+                "isConfiguredSchool" -> { result.success(configuration.isConfiguredSchool()) }
+                "setConfiguredSchool" -> {
+                    val value = call.argument<Boolean>("value");
+                    if(value != null) {
+                        configuration.setConfiguredSchool(value)
+                        result.success(true)
+                    } else {
+                        result.success(false)
+                    }
+                }
+                "isConfiguredEtui" -> { result.success(configuration.isConfiguredEtui()) }
+                "setConfiguredEtui" -> {
+                    val value = call.argument<Boolean>("value")
+                    if(value != null) {
+                        configuration.setConfiguredEtui(value)
+                        result.success(true)
+                    } else {
+                        result.success(false)
+                    }
+                }
+                else -> {
+                    result.notImplemented()
+                }
+            }
+        }
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CALIBRATE_CHANNEL).setMethodCallHandler { call, result ->
+            when (call.method) {
+                "startCalibrateWithoutEtui" -> {
+                    calibrate.startCalibrateWithoutEtui()
+                    result.success(true)
+                }
+                "isCalibratedWithoutEtui" -> {
+                    result.success(calibrate.isCalibratedWithoutEtui)
+                }
+                "isCalibratingWithoutEtui" -> {
+                    result.success(calibrate.isCalibratingWithoutEtui)
+                }
                 else -> {
                     result.notImplemented()
                 }
@@ -214,9 +266,15 @@ class MainActivity: FlutterActivity() {
       return null;
     }
 
+    override fun onPause() {
+        super.onPause()
+        calibrate.stop()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         unbindService(wbudyServiceConnection)
+        calibrate.stop()
     }
 }
 

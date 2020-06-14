@@ -11,9 +11,10 @@ class PositionAndMotionListener : BasicSensoreListener {
 
     }
     override fun onSensorChanged(event: SensorEvent?) {
-        val sensorName: String = event?.sensor!!.getName();
-        values.put("x", event.values[0].toDouble());
-        values.put("y", event.values[1].toDouble());
-        values.put("z", event.values[2].toDouble());
+        if (event != null) {
+            values.put("x", event.values[0].toDouble());
+            values.put("y", event.values[1].toDouble())
+            values.put("z", event.values[2].toDouble());
+        };
     }
 }

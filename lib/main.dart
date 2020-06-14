@@ -1,5 +1,8 @@
 
 import 'package:flutter/material.dart';
+import 'package:wbudy_apka/page/ConfigureEtui.dart';
+import 'package:wbudy_apka/page/ConfigureChild.dart';
+import 'package:wbudy_apka/page/ConfigureSchool.dart';
 
 import 'package:wbudy_apka/page/FirstStartPage.dart';
 import 'package:wbudy_apka/page/HomePage.dart';
@@ -24,7 +27,10 @@ class MyApp extends StatelessWidget {
         '/home': (BuildContext context) => HomePage(),
         '/sensors': (BuildContext context) => SensorsPage(),
         '/firstStart': (BuildContext context) => FirstStartPage(),
-        '/infoGps': (BuildContext context) => InfoGPSPage()
+        '/infoGps': (BuildContext context) => InfoGPSPage(),
+        '/configureChild': (BuildContext context) => ConfigureChild(),
+        '/configureChild_school': (BuildContext context) => ConfigureSchool(),
+        '/configureChild_etui': (BuildContext context) => ConfigureEtui()
       }
     );
   }

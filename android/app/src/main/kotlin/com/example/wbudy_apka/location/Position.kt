@@ -1,6 +1,7 @@
 package com.example.wbudy_apka.location
 
 import android.location.Location
+import com.example.wbudy_apka.model.LatLong
 
 public class Position {
     companion object {
@@ -56,8 +57,5 @@ public class Position {
             return "Position(latitude=$latitude, longitude=$longitude, time=$datetime)"
     }
 
-
-    //override fun toString(): String {
-    //}
-
+    val latlong: LatLong get() { return LatLong(latitude.latitude,longitude.longitude); }
 }

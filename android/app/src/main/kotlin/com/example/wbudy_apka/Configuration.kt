@@ -4,6 +4,7 @@ package com.example.wbudy_apka
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.wbudy_apka.model.LatLong
+import com.example.wbudy_apka.model.RangeDouble
 import com.example.wbudy_apka.model.TimeOfDay
 
 class Configuration(private var context: Context) {
@@ -11,20 +12,19 @@ class Configuration(private var context: Context) {
         val OwnerParent = "Parent"
         val OwnerChild = "Child"
     }
-    private val PREFIX = "config."
     private val SHARED_PREFERENCES_NAME: String = "WbudyAppSharedPreferences"
     private val LIST_IDENTIFIER: String = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu";
     private val BIG_INTEGER_PREFIX: String = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBCaWdJbnRlZ2Vy";
     private val DOUBLE_PREFIX: String = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu";
     private val prefs :SharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,Context.MODE_PRIVATE);
     private fun containsKey(key: String): Boolean {
-        return prefs.contains(PREFIX+key)
+        return prefs.contains(key)
     }
     fun getDouble(key: String): Double {
         if(!containsKey(key)) {
             throw error("Value ${key} not exist")
         }
-        var x = prefs.getString(PREFIX+key,DOUBLE_PREFIX+"0.0")
+        var x = prefs.getString(key,DOUBLE_PREFIX+"0.0")
         if(x != null) {
             x = x.substring(DOUBLE_PREFIX.length)
             return x.toDouble()
@@ -34,9 +34,9 @@ class Configuration(private var context: Context) {
     fun setDouble(key: String,value: Double) {
         val editor = prefs.edit()
         if(value == 0.0) {
-            editor.putString(PREFIX+key,DOUBLE_PREFIX+"0.0")
+            editor.putString(key,DOUBLE_PREFIX+"0.0")
         } else {
-            editor.putString(PREFIX+key,DOUBLE_PREFIX+value.toString())
+            editor.putString(key,DOUBLE_PREFIX+value.toString())
         }
         editor.commit()
     }
@@ -44,29 +44,29 @@ class Configuration(private var context: Context) {
         if(!containsKey(key)) {
             throw error("Value ${key} not exist")
         }
-        return prefs.getInt(PREFIX+key,0)
+        return prefs.getInt(key,0)
     }
     fun setInt(key: String, value: Int) {
         val editor = prefs.edit()
-        editor.putInt(PREFIX+key,value)
+        editor.putInt(key,value)
         editor.commit()
     }
     fun getBool(key: String): Boolean {
         if(!containsKey(key)) {
             throw error("Value ${key} not exist")
         }
-        return prefs.getBoolean(PREFIX+key,false)
+        return prefs.getBoolean(key,false)
     }
     fun setBool(key: String, value: Boolean) {
         val editor = prefs.edit()
-        editor.putBoolean(PREFIX+key,value)
+        editor.putBoolean(key,value)
         editor.commit()
     }
     fun getString(key: String): String {
         if(!containsKey(key)) {
             throw error("Value ${key} not exist")
         }
-        val x = prefs.getString(PREFIX+key,"")
+        val x = prefs.getString(key,"")
         if(x != null) {
             return x
         }
@@ -74,22 +74,54 @@ class Configuration(private var context: Context) {
     }
     fun setString(key: String, value: String) {
         val editor = prefs.edit()
-        editor.putString(PREFIX+key,value)
+        editor.putString(key,value)
         editor.commit()
+    }
+    fun getLatLong(key: String): LatLong {
+        val suffix = ".latlong"
+        val suffixlat = ".lat"
+        val suffixlong = ".long"
+        val fullKeyLat = key+suffix+suffixlat
+        val fullKeyLong: String = key+suffix+suffixlong
+        val lat = getDouble(fullKeyLat)
+        val long: Double = getDouble(fullKeyLong)
+        return LatLong(lat,long)
+    }
+    fun setLatLong(key: String, value: LatLong) {
+        val suffix = ".latlong"
+        val suffixlat = ".lat"
+        val suffixlong = ".long"
+        val fullKeyLat = key+suffix+suffixlat
+        val fullKeyLong: String = key+suffix+suffixlong
+        setDouble(fullKeyLat,value.latitude)
+        setDouble(fullKeyLong,value.longtitude)
+    }
+    fun setRangeDouble(key: String, value: RangeDouble) {
+        val suffixMin = ".range.min"
+        val suffixMax = ".range.max"
+        val fullKeyMin = key+suffixMin
+        val fullKeyMax = key+suffixMax
+        setDouble(fullKeyMin,value.min)
+        setDouble(fullKeyMax,value.max)
+    }
+    fun getRangeDouble(key: String): RangeDouble {
+        val suffixMin = ".range.min"
+        val suffixMax = ".range.max"
+        val fullKeyMin = key+suffixMin
+        val fullKeyMax = key+suffixMax
+        val min = getDouble(fullKeyMin)
+        val max =getDouble(fullKeyMax)
+        return RangeDouble(min,max);
     }
 
     fun getSchoolPosition(): LatLong {
-        val keyLat = "latSchool"
-        val keyLong = "longSchool"
-        val lat = getDouble(keyLat)
-        val long = getDouble(keyLong)
-        return LatLong(lat,long)
+        val key = "schoolPosition"
+        return getLatLong(key)
+
     }
     fun setSchoolPosition(value: LatLong) {
-        val keyLat = "latSchool"
-        val keyLong = "longSchool"
-        setDouble(keyLat,value.latitude)
-        setDouble(keyLong,value.longtitude)
+        val key = "schoolPosition"
+        setLatLong(key,value)
     }
     fun isAppConfigured(): Boolean {
         val key = "appConfigured"
@@ -135,5 +167,46 @@ class Configuration(private var context: Context) {
         val keyM = "schoolEndAt_minute"
         setInt(keyH,value.hours)
         setInt(keyM,value.minutes)
+    }
+    fun isHaveEtui(): Boolean {
+        val key = "haveEtui"
+        if(containsKey(key))
+            return getBool(key)
+        else
+            return false
+    }
+    fun setHaveEtui(value: Boolean) {
+        val key = "haveEtui"
+        setBool(key,value)
+    }
+    fun isConfiguredSchool(): Boolean {
+        val key = "configuredSchool"
+        if(containsKey(key))
+            return getBool(key)
+        else
+            return false
+    }
+    fun setConfiguredSchool(value: Boolean) {
+        val key = "configuredSchool"
+        setBool(key,value)
+    }
+    fun isConfiguredEtui(): Boolean {
+        val key = "configuredEtui"
+        if(containsKey(key))
+            return getBool(key)
+        else
+            return false
+    }
+    fun setConfiguredEtui(value: Boolean) {
+        val key = "configuredEtui"
+        setBool(key,value)
+    }
+    fun getRangeMagneticFieldLengthWithoutEtui(): RangeDouble {
+        val key = "rangeMagneticFieldLengthWithoutEtui"
+        return getRangeDouble(key);
+    }
+    fun setRangeMagneticFieldLengthWithoutEtui(value: RangeDouble) {
+        val key = "rangeMagneticFieldLengthWithoutEtui"
+        setRangeDouble(key,value)
     }
 }

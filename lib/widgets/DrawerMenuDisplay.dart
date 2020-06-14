@@ -40,6 +40,12 @@ class _DrawerMenuDisplayState extends State<DrawerMenuDisplay> {
               }
           ),
           ListTile(
+              title: Text("Ustawienia"),
+              onTap: () {
+                Navigator.pushNamed(context, '/configureChild');
+              }
+          ),
+          ListTile(
               title: Text("Zamknij aplikację i procesy w tle"),
               onTap: () {
                 _otherService.stopService();

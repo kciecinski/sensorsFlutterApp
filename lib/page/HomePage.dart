@@ -8,6 +8,8 @@ import 'package:wbudy_apka/widgets/DrawerMenuDisplay.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
+  PermissionService permissionService = PermissionService();
+  OtherService otherService = new OtherService();
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -18,16 +20,14 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      requestPermissionAndStartLocationService();
+      requestPermissionAndStartService();
     });
   }
 
-  Future requestPermissionAndStartLocationService() async {
-    var permissionsService = PermissionService();
-    bool granted = await permissionsService.askForGPSPermissions();
+  Future requestPermissionAndStartService() async {
+    bool granted = await widget.permissionService.askForGPSPermissions();
     if(granted) {
-      var otherService = new OtherService();
-      otherService.startService();
+      widget.otherService.startService();
     }
   }
 
@@ -44,7 +44,6 @@ class _HomePageState extends State<HomePage> {
         ListView(
             shrinkWrap: true,
             children: [
-              Text("Jeśli dziecko to tutaj jakiś status że dziecko się nie bawi czy bawi telefonem, czy ma być na zajęciach w danej chwili czy jest w szkole"),
               ChildStateDisplay()
             ]
         )

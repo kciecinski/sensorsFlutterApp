@@ -9,7 +9,8 @@ class EnvirementalListener : BasicSensoreListener {
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
     override fun onSensorChanged(event: SensorEvent?) {
-        val sensorName: String = event?.sensor!!.getName();
-        values.put("value", event.values[0].toDouble());
+        if (event != null) {
+            values.put("value", event.values[0].toDouble())
+        };
     }
 }
