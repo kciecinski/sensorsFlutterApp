@@ -20,7 +20,8 @@ class SensorService {
     {"Name": "Gyroscope", "Method": "getGyroscopeValues"},
     {"Name": "Acceleromert", "Method": "getAccelerometrValues"},
     {"Name": "MagneticField", "Method": "getMagneticFieldValues"},
-    {"Name": "Light", "Method": "getLightValues"}
+    {"Name": "Light", "Method": "getLightValues"},
+    {"Name": "Proxmity","Method":"getProximityValues"}
   ];
   static const _platform = const MethodChannel('samples.flutter.dev/sensors');
 

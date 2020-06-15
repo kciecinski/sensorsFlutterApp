@@ -54,6 +54,7 @@ class MainActivity: FlutterActivity() {
                 "getAccelerometrValues" -> checkResultFor(wbudyService.sensors.accListener.values, result)
                 "getMagneticFieldValues" -> checkResultFor(wbudyService.sensors.magneticListener.values, result)
                 "getLightValues" -> checkResultFor(wbudyService.sensors.lightListener.values, result)
+                "getProximityValues" -> checkResultFor(wbudyService.sensors.proxmityListener.values,result)
                 else -> {
                     result.notImplemented();
                 }

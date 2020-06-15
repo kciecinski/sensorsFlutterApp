@@ -61,6 +61,10 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
                 //Log.i("TYPE_LIGHT", event.values.size.toString())
                 //Log.i("TYPE_LIGHT",event.values.contentToString())
             }
+            Sensor.TYPE_PROXIMITY -> {
+                Log.i("TYPE_PROXIMITY", event.values.size.toString())
+                Log.i("TYPE_PROXIMITY",event.values.contentToString())
+            }
             else -> {
                 Log.e("ChildState","Unimplemented for this sensor");
             }
@@ -72,6 +76,7 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_NORMAL)
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED), SensorManager.SENSOR_DELAY_NORMAL)
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT), SensorManager.SENSOR_DELAY_NORMAL)
+        sensorManager.registerListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY),SensorManager.SENSOR_DELAY_NORMAL)
     }
     fun stop() {
         sensorManager.unregisterListener(this)
