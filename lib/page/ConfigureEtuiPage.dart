@@ -7,21 +7,20 @@ import 'package:flutter/services.dart';
 import 'package:wbudy_apka/service/CalibrateService.dart';
 import 'package:wbudy_apka/service/ConfigurationService.dart';
 
-class ConfigureEtui extends StatefulWidget {
-  ConfigureEtui({Key key}) : super(key: key);
+class ConfigureEtuiPage extends StatefulWidget {
+  ConfigureEtuiPage({Key key}) : super(key: key);
   ConfigurationService configurationService = ConfigurationService();
   CalibrateService calibrateService = CalibrateService();
   @override
-  _ConfigureEtuiState createState() => _ConfigureEtuiState();
+  _ConfigureEtuiPageState createState() => _ConfigureEtuiPageState();
 }
 
-class _ConfigureEtuiState extends State<ConfigureEtui> {
+class _ConfigureEtuiPageState extends State<ConfigureEtuiPage> {
   int configurationViewStep = 0;
   int configurationSteps = 1;
   bool loadedAll = false;
   bool haveEtui = false;
   bool calibratingWithoutEtui = false;
-  bool calibratedWithoutEtui = false;
   bool startedCalibrationWithoutEtui = false;
   bool get disabledAll {
     return startedCalibrationWithoutEtui;
@@ -34,13 +33,11 @@ class _ConfigureEtuiState extends State<ConfigureEtui> {
       case 1:
         _everySecond = Timer.periodic(Duration(seconds: 1), (Timer t) async {
           var _calibratingWithoutEtui = await widget.calibrateService.isCalibratingWithoutEtui();
-          var _calibratedWithoutEtui = await widget.calibrateService.isCalibratedWithoutEtui();
           setState(() {
             if(!_calibratingWithoutEtui) {
               startedCalibrationWithoutEtui = false;
             }
             calibratingWithoutEtui = _calibratingWithoutEtui;
-            calibratedWithoutEtui = _calibratedWithoutEtui;
           });
         });
         break;

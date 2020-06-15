@@ -18,6 +18,8 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
     private var configuration: Configuration = Configuration(context)
     private var lastPosition: LatLong = LatLong(0.0,0.0)
     private var lastMagneticField: Vector3 = Vector3(0.0,0.0,0.0);
+    private var lastProxmity: Double = 0.0;
+    private var lastAcceleration: Vector3 = Vector3(0.0,0.0,0.0);
     fun getRadiusCricleForCheckIsInSchool(): Double {
         return 100.0/1000;
     }
@@ -34,6 +36,9 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
     fun isWithoutEtui(): Boolean {
         return configuration.getRangeMagneticFieldLengthWithoutEtui().isInRangeInclusive(lastMagneticField.length);
     }
+    fun isPhoneHidden(): Boolean {
+        return lastProxmity < 0.5
+    }
 
     /**
      * Handler for incomming position
@@ -49,7 +54,8 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
             return
         when(event.sensor.type) {
             Sensor.TYPE_ACCELEROMETER -> {
-                //Log.i("TYPE_ACCELEROMETER", event.values.size.toString())
+                lastAcceleration = Vector3(event.values[0].toDouble(),event.values[1].toDouble(),event.values[2].toDouble())
+                Log.i("TYPE_ACCELEROMETER","lastAcceleration: ${lastAcceleration.length}")
             }
             Sensor.TYPE_GYROSCOPE -> {
                 //Log.i("TYPE_GYROSCOPE", event.values.size.toString())
@@ -62,8 +68,7 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
                 //Log.i("TYPE_LIGHT",event.values.contentToString())
             }
             Sensor.TYPE_PROXIMITY -> {
-                Log.i("TYPE_PROXIMITY", event.values.size.toString())
-                Log.i("TYPE_PROXIMITY",event.values.contentToString())
+                lastProxmity = event.values[0].toDouble();
             }
             else -> {
                 Log.e("ChildState","Unimplemented for this sensor");

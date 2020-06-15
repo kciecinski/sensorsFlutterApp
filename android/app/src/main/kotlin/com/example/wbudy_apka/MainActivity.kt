@@ -110,6 +110,7 @@ class MainActivity: FlutterActivity() {
                     hashMap.put("shouldBeInSchool",wbudyService.childState.isShouldBeInSchool().toString())
                     hashMap.put("inSchool",wbudyService.childState.isInSchool().toString())
                     hashMap.put("isWithoutEtui",wbudyService.childState.isWithoutEtui().toString())
+                    hashMap.put("isPhoneHidden",wbudyService.childState.isPhoneHidden().toString())
                     result.success(hashMap)
                 }
                 else -> {
@@ -236,11 +237,15 @@ class MainActivity: FlutterActivity() {
                     calibrate.startCalibrateWithoutEtui()
                     result.success(true)
                 }
-                "isCalibratedWithoutEtui" -> {
-                    result.success(calibrate.isCalibratedWithoutEtui)
-                }
                 "isCalibratingWithoutEtui" -> {
                     result.success(calibrate.isCalibratingWithoutEtui)
+                }
+                "startCalibrateMotionDetect" -> {
+                    calibrate.startCalibrateMotionDetect()
+                    result.success(true)
+                }
+                "isCalibratingMotionDetect" -> {
+                    result.success(calibrate.isCalibratingMotionDetect)
                 }
                 else -> {
                     result.notImplemented()

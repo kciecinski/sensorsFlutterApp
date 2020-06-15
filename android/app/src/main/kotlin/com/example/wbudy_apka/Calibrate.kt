@@ -18,6 +18,11 @@ class Calibrate(private var context: Context): SensorEventListener {
     var mapI = HashMap<String,Int>()
 
     override fun onSensorChanged(event: SensorEvent?) {
+        if(!isSomethingIsCalibating){
+            stop()
+            return
+        }
+
         if(event == null)
             return
 
@@ -56,9 +61,7 @@ class Calibrate(private var context: Context): SensorEventListener {
                         val min = mapD.get("min");
                         val max = mapD.get("max");
                         if(min != null && max != null) {
-                            stop();
                             _isCalibratingWithoutEtui = false
-                            _isCalibratedWithoutEtui = true
                             mapD.clear()
                             mapI.clear()
                             configuration.setRangeMagneticFieldLengthWithoutEtui(RangeDouble(min,max));
@@ -66,32 +69,44 @@ class Calibrate(private var context: Context): SensorEventListener {
                     }
                 }
             }
+            Sensor.TYPE_ACCELEROMETER -> {
+
+            }
         }
     }
 
     fun startCalibrateWithoutEtui() {
-        _isCalibratingWithoutEtui = true;
-        _isCalibratedWithoutEtui = false;
+        _isCalibratingWithoutEtui = true
         start()
     }
     private var _isCalibratingWithoutEtui: Boolean = false;
-    private var _isCalibratedWithoutEtui: Boolean = false;
-    val isCalibratedWithoutEtui: Boolean
-        get() {
-            return _isCalibratedWithoutEtui && !_isCalibratingWithoutEtui
-        }
     val isCalibratingWithoutEtui: Boolean
         get() {
             return _isCalibratingWithoutEtui
         }
+    fun startCalibrateMotionDetect() {
+        _isCalibratingMotionDetect = true
+        start()
+    }
+    private var _isCalibratingMotionDetect: Boolean = false;
+    val isCalibratingMotionDetect: Boolean
+    get() {
+        return _isCalibratingMotionDetect;
+    }
+
+    private val isSomethingIsCalibating: Boolean
+        get() { return isCalibratingMotionDetect || isCalibratingWithoutEtui }
 
     fun start() {
-        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL)
-        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_NORMAL)
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED), SensorManager.SENSOR_DELAY_NORMAL)
-        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT), SensorManager.SENSOR_DELAY_NORMAL)
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL)
+
     }
     fun stop() {
+        mapD.clear()
+        mapI.clear()
         sensorManager.unregisterListener(this)
     }
+
+
 }

@@ -4,17 +4,17 @@ import 'package:wbudy_apka/service/ConfigurationService.dart';
 import 'package:wbudy_apka/service/OtherService.dart';
 import 'package:wbudy_apka/service/PermissionService.dart';
 
-class ConfigureChild extends StatefulWidget {
-  ConfigureChild({Key key}) : super(key: key);
+class ConfigureChildPage extends StatefulWidget {
+  ConfigureChildPage({Key key}) : super(key: key);
   PermissionService permissionService = PermissionService();
   OtherService otherService = new OtherService();
   ConfigurationService configurationService = ConfigurationService();
 
   @override
-  _ConfigureChildState createState() => _ConfigureChildState();
+  _ConfigureChildPageState createState() => _ConfigureChildPageState();
 }
 
-class _ConfigureChildState extends State<ConfigureChild> {
+class _ConfigureChildPageState extends State<ConfigureChildPage> {
 
   @override
   void initState() {
@@ -33,6 +33,7 @@ class _ConfigureChildState extends State<ConfigureChild> {
   var configuredAll = false;
   var configuredEtui = false;
   var configuredSchool = false;
+  var configuredMotionDetect = false;//TODO: add ask for value
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +81,13 @@ class _ConfigureChildState extends State<ConfigureChild> {
                       subtitle: Text(configuredSchool ? "" : "Wymagana konfiguracja"),
                       onTap: () {
                         Navigator.pushNamed(context, '/configureChild_school');
+                      },
+                    ),
+                    ListTile(
+                      title: Text("Wykrywanie ruchu"),
+                      subtitle: Text(configuredMotionDetect ? "": "Wymagana konfiguracja"),
+                      onTap: () {
+                        Navigator.pushNamed(context, '/configureChild_motionDetect');
                       },
                     )
                   ]

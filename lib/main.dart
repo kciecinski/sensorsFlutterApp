@@ -1,8 +1,9 @@
 
 import 'package:flutter/material.dart';
-import 'package:wbudy_apka/page/ConfigureEtui.dart';
-import 'package:wbudy_apka/page/ConfigureChild.dart';
-import 'package:wbudy_apka/page/ConfigureSchool.dart';
+import 'package:wbudy_apka/page/ConfigureEtuiPage.dart';
+import 'package:wbudy_apka/page/ConfigureChildPage.dart';
+import 'package:wbudy_apka/page/ConfigureSchoolPage.dart';
+import 'package:wbudy_apka/page/ConfigureMotionDetectPage.dart';
 
 import 'package:wbudy_apka/page/FirstStartPage.dart';
 import 'package:wbudy_apka/page/HomePage.dart';
@@ -28,9 +29,10 @@ class MyApp extends StatelessWidget {
         '/sensors': (BuildContext context) => SensorsPage(),
         '/firstStart': (BuildContext context) => FirstStartPage(),
         '/infoGps': (BuildContext context) => InfoGPSPage(),
-        '/configureChild': (BuildContext context) => ConfigureChild(),
-        '/configureChild_school': (BuildContext context) => ConfigureSchool(),
-        '/configureChild_etui': (BuildContext context) => ConfigureEtui()
+        '/configureChild': (BuildContext context) => ConfigureChildPage(),
+        '/configureChild_school': (BuildContext context) => ConfigureSchoolPage(),
+        '/configureChild_etui': (BuildContext context) => ConfigureEtuiPage(),
+        '/configureChild_motionDetect': (BuildContext context) => ConfigureMotionDetectPage()
       }
     );
   }

@@ -5,14 +5,14 @@ import 'package:nominatim_location_picker/nominatim_location_picker.dart';
 import 'package:wbudy_apka/model/LatLong.dart';
 import 'package:wbudy_apka/service/ConfigurationService.dart';
 
-class ConfigureSchool extends StatefulWidget {
-  ConfigureSchool({Key key}) : super(key: key);
+class ConfigureSchoolPage extends StatefulWidget {
+  ConfigureSchoolPage({Key key}) : super(key: key);
   ConfigurationService configurationService = ConfigurationService();
   @override
-  _ConfigureSchoolState createState() => _ConfigureSchoolState();
+  _ConfigureSchoolPageState createState() => _ConfigureSchoolPageState();
 }
 
-class _ConfigureSchoolState extends State<ConfigureSchool> {
+class _ConfigureSchoolPageState extends State<ConfigureSchoolPage> {
 
   TimeOfDay schoolStartsAt = TimeOfDay.fromDateTime(DateTime.now());
   bool schoolStartsAtSelected = false;
