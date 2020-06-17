@@ -29,9 +29,10 @@ class ConfigurationService{
   static const String _setHaveEtuiMethod = "setHaveEtui";
   static const String _isConfiguredEtuiMethod = "isConfiguredEtui";
   static const String _setConfiguredEtuiMethod = "setConfiguredEtui";
-
   static const String _isConfiguredSchoolMethod = "isConfiguredSchool";
   static const String _setConfiguredSchoolMethod = "setConfiguredSchool";
+  static const String _isConfiguredMotionDetectorMethod = "isConfiguredMotionDetector";
+  static const String _setConfiguredMotionDetectorMethod = "setConfiguredMotionDetector";
 
   static const MethodChannel _platform = const MethodChannel("samples.flutter.dev/configuration");
 
@@ -98,7 +99,9 @@ class ConfigurationService{
 
   Future<bool> isConfiguredAll() async {
     var etui = await isConfiguredEtui();
-    return etui;
+    var school = await isConfiguredSchool();
+    var motiondetector = await isConfiguredMotionDetector();
+    return etui && school && motiondetector;
   }
 
   Future<bool> isConfiguredEtui() async {
@@ -116,5 +119,14 @@ class ConfigurationService{
   Future setConfiguredSchool(bool value) async {
     print("setConfiguredSchool");
     await _platform.invokeMethod(_setConfiguredSchoolMethod,{"value":value});
+  }
+
+  Future<bool> isConfiguredMotionDetector() async {
+    return await _platform.invokeMethod(_isConfiguredMotionDetectorMethod);
+  }
+
+  Future setConfiguredMotionDetector(bool value) async {
+    print("setConfiguredMotionDetector");
+    await _platform.invokeMethod(_setConfiguredMotionDetectorMethod,{"value":value});
   }
 }

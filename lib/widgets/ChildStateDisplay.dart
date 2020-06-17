@@ -25,6 +25,7 @@ class _ChildStateDisplayState extends State<ChildStateDisplay> {
   bool inSchool;
   bool isWithoutEtui;
   bool isPhoneHidden;
+  bool isInMotion;
 
   @override
   void initState() {
@@ -36,12 +37,14 @@ class _ChildStateDisplayState extends State<ChildStateDisplay> {
       bool _inSchool = (childState["inSchool"] == "true");
       bool _isWithoutEtui = (childState['isWithoutEtui'] == "true");
       bool _isPhoneHidden = (childState['isPhoneHidden'] == "true");
+      bool _isInMotion = (childState['isInMotion'] == "true");
       setState(() {
         distanceToSchool = _distanceToSchool;
         shouldBeInSchool = _shouldBeInSchool;
         inSchool = _inSchool;
         isWithoutEtui = _isWithoutEtui;
         isPhoneHidden = _isPhoneHidden;
+        isInMotion = _isInMotion;
       });
     });
   }
@@ -70,6 +73,10 @@ class _ChildStateDisplayState extends State<ChildStateDisplay> {
         ListTile(
           title: Text("Telefon schowany"),
           subtitle: Text(isPhoneHidden != null ? (isPhoneHidden ? "Tak" : "Nie") : "-"),
+        ),
+        ListTile(
+          title: Text("Telefon w ruchu"),
+          subtitle: Text(isInMotion != null ? (isInMotion ? "Tak" : "Nie") : "-"),
         )
       ],
     );

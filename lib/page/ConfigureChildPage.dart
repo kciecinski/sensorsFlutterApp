@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wbudy_apka/service/ConfigurationService.dart';
@@ -15,9 +17,22 @@ class ConfigureChildPage extends StatefulWidget {
 }
 
 class _ConfigureChildPageState extends State<ConfigureChildPage> {
+  Timer _everySecond;
 
   @override
   void initState() {
+    _everySecond = Timer.periodic(Duration(seconds: 1), (Timer t) async {
+      bool isConfiguredAll = await widget.configurationService.isConfiguredAll();
+      bool isConfiguredEtui = await widget.configurationService.isConfiguredEtui();
+      bool isConfiguredSchool = await widget.configurationService.isConfiguredSchool();
+      bool isConfiguredMotionDetector = await widget.configurationService.isConfiguredMotionDetector();
+      setState((){
+        configuredAll = isConfiguredAll;
+        configuredEtui = isConfiguredEtui;
+        configuredSchool = isConfiguredSchool;
+        configuredMotionDetector = isConfiguredMotionDetector;
+      });
+    });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       requestPermissionAndStartService();
     });
@@ -33,31 +48,16 @@ class _ConfigureChildPageState extends State<ConfigureChildPage> {
   var configuredAll = false;
   var configuredEtui = false;
   var configuredSchool = false;
-  var configuredMotionDetect = false;//TODO: add ask for value
+  var configuredMotionDetector = false;//TODO: add ask for value
+
+  @override
+  void dispose() {
+    super.dispose();
+    _everySecond.cancel();
+  }
 
   @override
   Widget build(BuildContext context) {
-    widget.configurationService.isConfiguredAll().then((_configuredAll) => {
-      if(_configuredAll != configuredAll) {
-        setState((){
-          configuredAll = _configuredAll;
-        })
-      }
-    });
-    widget.configurationService.isConfiguredEtui().then((_configured) => {
-      if(_configured != configuredEtui) {
-        setState((){
-          configuredEtui = _configured;
-        })
-      }
-    });
-    widget.configurationService.isConfiguredSchool().then((_configured) => {
-      if(_configured != configuredSchool) {
-        setState((){
-          configuredSchool = _configured;
-        })
-      }
-    });
     return WillPopScope(
         onWillPop: () async => configuredAll,
         child: Scaffold(
@@ -85,7 +85,7 @@ class _ConfigureChildPageState extends State<ConfigureChildPage> {
                     ),
                     ListTile(
                       title: Text("Wykrywanie ruchu"),
-                      subtitle: Text(configuredMotionDetect ? "": "Wymagana konfiguracja"),
+                      subtitle: Text(configuredMotionDetector ? "": "Wymagana konfiguracja"),
                       onTap: () {
                         Navigator.pushNamed(context, '/configureChild_motionDetect');
                       },

@@ -69,7 +69,7 @@ class _ConfigureMotionDetectPageState extends State<ConfigureMotionDetectPage> {
                 disabledTextColor: Colors.white,
                 textColor: Colors.white,
                 textTheme: ButtonTextTheme.normal,
-                child: Text("Telefon wyciągnięty"),
+                child: Text("Telefon leży nieruchomo"),
               ),
               ListTile(
                 title: Text(calibratingMotionDetect ? "proszę czekać":""),

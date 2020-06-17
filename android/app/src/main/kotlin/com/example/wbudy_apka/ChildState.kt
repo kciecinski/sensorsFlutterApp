@@ -39,6 +39,9 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
     fun isPhoneHidden(): Boolean {
         return lastProxmity < 0.5
     }
+    fun isInMotion(): Boolean {
+        return !configuration.getRangeAccelerationWithoutMotion().isInRangeInclusive(lastAcceleration.length);
+    }
 
     /**
      * Handler for incomming position
@@ -55,7 +58,6 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
         when(event.sensor.type) {
             Sensor.TYPE_ACCELEROMETER -> {
                 lastAcceleration = Vector3(event.values[0].toDouble(),event.values[1].toDouble(),event.values[2].toDouble())
-                Log.i("TYPE_ACCELEROMETER","lastAcceleration: ${lastAcceleration.length}")
             }
             Sensor.TYPE_GYROSCOPE -> {
                 //Log.i("TYPE_GYROSCOPE", event.values.size.toString())

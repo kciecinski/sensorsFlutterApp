@@ -209,4 +209,25 @@ class Configuration(private var context: Context) {
         val key = "rangeMagneticFieldLengthWithoutEtui"
         setRangeDouble(key,value)
     }
+
+    fun getRangeAccelerationWithoutMotion(): RangeDouble {
+        val key = "rangeAccelerationWithoutMotion"
+        return getRangeDouble(key);
+    }
+
+    fun setRangeAccelerationWithoutMotion(value: RangeDouble) {
+        val key = "rangeAccelerationWithoutMotion"
+        setRangeDouble(key,value)
+    }
+    fun isConfiguredMotionDetector(): Boolean {
+        val key = "configuredMotionDetector"
+        if(containsKey(key))
+            return getBool(key)
+        else
+            return false
+    }
+    fun setConfiguredMotionDetector(value: Boolean) {
+        val key = "configuredMotionDetector"
+        setBool(key,value)
+    }
 }

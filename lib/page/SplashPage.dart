@@ -20,15 +20,6 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
 
-
-
-  @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      this.detectWhatPageShouldSee();
-    });
-  }
-
   Future detectWhatPageShouldSee() async {
     var appConfigured = await widget._configurationService.isAppConfigured();
     print({"appConfigured":appConfigured});
@@ -64,6 +55,7 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
+    this.detectWhatPageShouldSee();
     return Scaffold(
       body: Center(
         child: ListView(

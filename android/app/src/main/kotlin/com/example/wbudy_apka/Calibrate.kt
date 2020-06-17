@@ -6,6 +6,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.util.Log
+import com.example.wbudy_apka.math.Vector3
 import com.example.wbudy_apka.model.RangeDouble
 
 
@@ -56,7 +57,7 @@ class Calibrate(private var context: Context): SensorEventListener {
                         mapD.set("max",l)
                         mapI.set("probeWhenNotChange",0);
                     }
-                    Log.i("Calibrate","${probeWhenNotChange} ${max} ${min}")
+                    Log.i("Calibrate without etui","${probeWhenNotChange} ${max} ${min}")
                     if(probeWhenNotChange > 50) {
                         val min = mapD.get("min");
                         val max = mapD.get("max");
@@ -70,7 +71,44 @@ class Calibrate(private var context: Context): SensorEventListener {
                 }
             }
             Sensor.TYPE_ACCELEROMETER -> {
-
+                if(_isCalibratingMotionDetect) {
+                    val acceleration = Vector3(event.values[0].toDouble(),event.values[1].toDouble(),event.values[2].toDouble())
+                    val accelerationL = acceleration.length
+                    val min = mapD.get("min")
+                    val max = mapD.get("max")
+                    if(min == null || max == null) {
+                        mapD.set("min",accelerationL)
+                        mapD.set("max",accelerationL)
+                        mapI.set("probeWhenNotChange",0);
+                    }
+                    else {
+                        var probeWhenNotChange = mapI.get("probeWhenNotChange")
+                        if(probeWhenNotChange == null) probeWhenNotChange = 0
+                        if(accelerationL < min) {
+                            mapD.set("min",accelerationL)
+                            mapI.set("probeWhenNotChange",0);
+                        }
+                        else if(max < accelerationL) {
+                            mapD.set("max",accelerationL)
+                            mapI.set("probeWhenNotChange",0);
+                        }
+                        else {
+                            probeWhenNotChange += 1
+                            mapI.set("probeWhenNotChange",probeWhenNotChange)
+                        }
+                        if(probeWhenNotChange > 50) {
+                            val min = mapD.get("min");
+                            val max = mapD.get("max");
+                            if(min != null && max != null) {
+                                _isCalibratingMotionDetect = false
+                                mapD.clear()
+                                mapI.clear()
+                                configuration.setRangeAccelerationWithoutMotion(RangeDouble(min,max))
+                                configuration.setConfiguredMotionDetector(true)
+                            }
+                        }
+                    }
+                }
             }
         }
     }

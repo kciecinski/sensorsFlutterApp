@@ -111,6 +111,7 @@ class MainActivity: FlutterActivity() {
                     hashMap.put("inSchool",wbudyService.childState.isInSchool().toString())
                     hashMap.put("isWithoutEtui",wbudyService.childState.isWithoutEtui().toString())
                     hashMap.put("isPhoneHidden",wbudyService.childState.isPhoneHidden().toString())
+                    hashMap.put("isInMotion",wbudyService.childState.isInMotion().toString())
                     result.success(hashMap)
                 }
                 else -> {
@@ -221,6 +222,16 @@ class MainActivity: FlutterActivity() {
                     val value = call.argument<Boolean>("value")
                     if(value != null) {
                         configuration.setConfiguredEtui(value)
+                        result.success(true)
+                    } else {
+                        result.success(false)
+                    }
+                }
+                "isConfiguredMotionDetector" -> { result.success(configuration.isConfiguredMotionDetector()) }
+                "setConfiguredMotionDetector" -> {
+                    val value = call.argument<Boolean>("value")
+                    if(value != null) {
+                        configuration.setConfiguredMotionDetector(value)
                         result.success(true)
                     } else {
                         result.success(false)
