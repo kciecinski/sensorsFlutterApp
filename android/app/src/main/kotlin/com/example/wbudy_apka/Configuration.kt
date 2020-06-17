@@ -219,6 +219,15 @@ class Configuration(private var context: Context) {
         val key = "rangeAccelerationWithoutMotion"
         setRangeDouble(key,value)
     }
+    fun getRangeRotationWithoutMotion(): RangeDouble {
+        val key = "rangeRotationWithoutMotion"
+        return getRangeDouble(key);
+    }
+
+    fun setRangeRotationWithoutMotion(value: RangeDouble) {
+        val key = "rangeRotationWithoutMotion"
+        setRangeDouble(key,value)
+    }
     fun isConfiguredMotionDetector(): Boolean {
         val key = "configuredMotionDetector"
         if(containsKey(key))

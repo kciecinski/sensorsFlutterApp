@@ -71,45 +71,87 @@ class Calibrate(private var context: Context): SensorEventListener {
                 }
             }
             Sensor.TYPE_ACCELEROMETER -> {
-                if(_isCalibratingMotionDetect) {
-                    val acceleration = Vector3(event.values[0].toDouble(),event.values[1].toDouble(),event.values[2].toDouble())
-                    val accelerationL = acceleration.length
-                    val min = mapD.get("min")
-                    val max = mapD.get("max")
-                    if(min == null || max == null) {
-                        mapD.set("min",accelerationL)
-                        mapD.set("max",accelerationL)
-                        mapI.set("probeWhenNotChange",0);
+                if(_isCalibratingMotionDetect_acceleration) {
+                    val acceleration_vec = Vector3(event.values[0].toDouble(),event.values[1].toDouble(),event.values[2].toDouble())
+                    val acceleration = acceleration_vec.length
+                    val minAcceleration = mapD.get("minAcceleration")
+                    val maxAcceleration = mapD.get("maxAcceleration")
+                    if(minAcceleration == null || maxAcceleration == null) {
+                        mapD.set("minAcceleration",acceleration)
+                        mapD.set("maxAcceleration",acceleration)
+                        mapI.set("probeWhenNotChangeAcceleration",0);
                     }
                     else {
-                        var probeWhenNotChange = mapI.get("probeWhenNotChange")
+                        var probeWhenNotChange = mapI.get("probeWhenNotChangeAcceleration")
                         if(probeWhenNotChange == null) probeWhenNotChange = 0
-                        if(accelerationL < min) {
-                            mapD.set("min",accelerationL)
-                            mapI.set("probeWhenNotChange",0);
+                        if(acceleration < minAcceleration) {
+                            mapD.set("minAcceleration",acceleration)
+                            mapI.set("probeWhenNotChangeAcceleration",0);
                         }
-                        else if(max < accelerationL) {
-                            mapD.set("max",accelerationL)
-                            mapI.set("probeWhenNotChange",0);
+                        else if(maxAcceleration < acceleration) {
+                            mapD.set("maxAcceleration",acceleration)
+                            mapI.set("probeWhenNotChangeAcceleration",0);
                         }
                         else {
                             probeWhenNotChange += 1
-                            mapI.set("probeWhenNotChange",probeWhenNotChange)
+                            mapI.set("probeWhenNotChangeAcceleration",probeWhenNotChange)
                         }
                         if(probeWhenNotChange > 50) {
-                            val min = mapD.get("min");
-                            val max = mapD.get("max");
+                            val min = mapD.get("minAcceleration");
+                            val max = mapD.get("maxAcceleration");
                             if(min != null && max != null) {
-                                _isCalibratingMotionDetect = false
-                                mapD.clear()
-                                mapI.clear()
+                                _isCalibratingMotionDetect_acceleration = false
                                 configuration.setRangeAccelerationWithoutMotion(RangeDouble(min,max))
+                                if(!isCalibratingMotionDetect) {
+                                    configuration.setConfiguredMotionDetector(true)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        Sensor.TYPE_GYROSCOPE -> {
+            if(_isCalibratingMotionDetect_gyro) {
+                val gyro_vec = Vector3(event.values[0].toDouble(),event.values[1].toDouble(),event.values[2].toDouble())
+                val gyro = gyro_vec.length
+                val minGyro = mapD.get("minGyro")
+                val maxGyro = mapD.get("maxGyro")
+                if(minGyro == null || maxGyro == null) {
+                    mapD.set("minGyro",gyro)
+                    mapD.set("maxGyro",gyro)
+                    mapI.set("probeWhenNotChangeGyro",0);
+                }
+                else {
+                    var probeWhenNotChange = mapI.get("probeWhenNotChangeGyro")
+                    if(probeWhenNotChange == null) probeWhenNotChange = 0
+                    if(gyro < minGyro) {
+                        mapD.set("minGyro",gyro)
+                        mapI.set("probeWhenNotChangeGyro",0);
+                    }
+                    else if(maxGyro < gyro) {
+                        mapD.set("maxGyro",gyro)
+                        mapI.set("probeWhenNotChangeGyro",0);
+                    }
+                    else {
+                        probeWhenNotChange += 1
+                        mapI.set("probeWhenNotChangeGyro",probeWhenNotChange)
+                    }
+                    if(probeWhenNotChange > 50) {
+                        val min = mapD.get("minGyro");
+                        val max = mapD.get("maxGyro");
+                        if(min != null && max != null) {
+                            _isCalibratingMotionDetect_gyro = false
+                            mapD.clear()
+                            mapI.clear()
+                            configuration.setRangeRotationWithoutMotion(RangeDouble(min,max))
+                            if(!isCalibratingMotionDetect) {
                                 configuration.setConfiguredMotionDetector(true)
                             }
                         }
                     }
                 }
             }
+        }
         }
     }
 
@@ -123,13 +165,15 @@ class Calibrate(private var context: Context): SensorEventListener {
             return _isCalibratingWithoutEtui
         }
     fun startCalibrateMotionDetect() {
-        _isCalibratingMotionDetect = true
+        _isCalibratingMotionDetect_acceleration = true
+        _isCalibratingMotionDetect_gyro = true
         start()
     }
-    private var _isCalibratingMotionDetect: Boolean = false;
+    private var _isCalibratingMotionDetect_acceleration: Boolean = false;
+    private var _isCalibratingMotionDetect_gyro: Boolean = false;
     val isCalibratingMotionDetect: Boolean
     get() {
-        return _isCalibratingMotionDetect;
+        return _isCalibratingMotionDetect_acceleration || _isCalibratingMotionDetect_gyro;
     }
 
     private val isSomethingIsCalibating: Boolean
@@ -138,7 +182,7 @@ class Calibrate(private var context: Context): SensorEventListener {
     fun start() {
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED), SensorManager.SENSOR_DELAY_NORMAL)
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL)
-
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_NORMAL)
     }
     fun stop() {
         mapD.clear()

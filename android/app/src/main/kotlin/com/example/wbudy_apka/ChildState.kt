@@ -20,6 +20,7 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
     private var lastMagneticField: Vector3 = Vector3(0.0,0.0,0.0);
     private var lastProxmity: Double = 0.0;
     private var lastAcceleration: Vector3 = Vector3(0.0,0.0,0.0);
+    private var lastRotation: Vector3 = Vector3(0.0,0.0,0.0);
     fun getRadiusCricleForCheckIsInSchool(): Double {
         return 100.0/1000;
     }
@@ -40,7 +41,9 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
         return lastProxmity < 0.5
     }
     fun isInMotion(): Boolean {
-        return !configuration.getRangeAccelerationWithoutMotion().isInRangeInclusive(lastAcceleration.length);
+        val inMotionAcceleration = !configuration.getRangeAccelerationWithoutMotion().isInRangeInclusive(lastAcceleration.length)
+        val inMotionGyro = !configuration.getRangeRotationWithoutMotion().isInRangeInclusive(lastRotation.length)
+        return inMotionAcceleration || inMotionGyro
     }
 
     /**
@@ -60,7 +63,7 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
                 lastAcceleration = Vector3(event.values[0].toDouble(),event.values[1].toDouble(),event.values[2].toDouble())
             }
             Sensor.TYPE_GYROSCOPE -> {
-                //Log.i("TYPE_GYROSCOPE", event.values.size.toString())
+                lastRotation = Vector3(event.values[0].toDouble(),event.values[1].toDouble(),event.values[2].toDouble())
             }
             Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED -> {
                 lastMagneticField = Vector3(event.values[0].toDouble(),event.values[1].toDouble(),event.values[2].toDouble())
@@ -82,7 +85,7 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL)
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_NORMAL)
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED), SensorManager.SENSOR_DELAY_NORMAL)
-        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT), SensorManager.SENSOR_DELAY_NORMAL)
+        //sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT), SensorManager.SENSOR_DELAY_NORMAL)
         sensorManager.registerListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY),SensorManager.SENSOR_DELAY_NORMAL)
     }
     fun stop() {
