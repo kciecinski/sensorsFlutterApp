@@ -6,17 +6,26 @@ import 'package:wbudy_apka/service/PermissionService.dart';
 import 'package:wbudy_apka/widgets/ChildStateDisplay.dart';
 import 'package:wbudy_apka/widgets/DrawerMenuDisplay.dart';
 
-class HomePage extends StatefulWidget {
-  HomePage({Key key}) : super(key: key);
+import 'ConfigureChildPage.dart';
+
+class HomeChildPage extends StatefulWidget {
+  HomeChildPage({Key key}) : super(key: key);
   PermissionService permissionService = PermissionService();
   OtherService otherService = new OtherService();
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _HomeChildPageState createState() => _HomeChildPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomeChildPageState extends State<HomeChildPage> {
 
+  Future configurationChildDialog() async {
+    print("configurationChildDialog");
+    await showDialog<bool>(context: context, builder: (BuildContext ctx) => Container(
+      decoration: BoxDecoration(),
+      child: ConfigureChildPage(),
+    ));
+  }
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -44,7 +53,7 @@ class _HomePageState extends State<HomePage> {
         ListView(
             shrinkWrap: true,
             children: [
-              ChildStateDisplay()
+              ChildStateDisplay ()
             ]
         )
         ),

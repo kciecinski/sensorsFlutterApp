@@ -16,7 +16,7 @@ class ConfigureChildPage extends StatefulWidget {
   _ConfigureChildPageState createState() => _ConfigureChildPageState();
 }
 
-class _ConfigureChildPageState extends State<ConfigureChildPage> {
+class _ConfigureChildPageState extends State<ConfigureChildPage> with WidgetsBindingObserver{
   Timer _everySecond;
 
   @override
@@ -52,8 +52,8 @@ class _ConfigureChildPageState extends State<ConfigureChildPage> {
 
   @override
   void dispose() {
-    super.dispose();
     _everySecond.cancel();
+    super.dispose();
   }
 
   @override

@@ -1,14 +1,13 @@
+import 'dart:async';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:wbudy_apka/service/ConfigurationService.dart';
 import 'package:wbudy_apka/service/OtherService.dart';
-import './../service/PermissionService.dart';
+import 'package:wbudy_apka/service/PermissionService.dart';
 
 class SplashPage extends StatefulWidget {
   SplashPage({Key key}) : super(key: key);
-  PermissionService _permissionService = PermissionService();
-  ConfigurationService _configurationService = ConfigurationService();
   @override
   StatefulElement createElement() {
     return super.createElement();
@@ -18,24 +17,27 @@ class SplashPage extends StatefulWidget {
   _SplashPageState createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage> {
+class _SplashPageState extends State<SplashPage> with NavigatorObserver{
 
+  PermissionService permissionService = PermissionService();
+  ConfigurationService configurationService = ConfigurationService();
   Future detectWhatPageShouldSee() async {
-    var appConfigured = await widget._configurationService.isAppConfigured();
+    var appConfigured = await configurationService.isAppConfigured();
     print({"appConfigured":appConfigured});
     if(!appConfigured) {
       Navigator.pushNamed(context, '/firstStart');
     }
     else {
-      var deviceOwner = await widget._configurationService.getDeviceOwner();
+      var deviceOwner = await configurationService.getDeviceOwner();
       if(deviceOwner == ConfigurationService.OwnerParent) {
-        Navigator.pushNamed(context, '/home');
+        Navigator.pushNamed(context, '/homeParent');
       } else if(deviceOwner == ConfigurationService.OwnerChild) {
         await requestPermissionAndStartService();
-        var isCalibratedAllSensors = await widget._configurationService.isConfiguredAll();
+        var isCalibratedAllSensors = await configurationService.isConfiguredAll();
         if(isCalibratedAllSensors) {
-          Navigator.pushNamed(context, '/home');
+          Navigator.pushNamed(context, '/homeChild');
         } else {
+          Navigator.pushReplacementNamed(context, '/homeChild');
           Navigator.pushNamed(context, '/configureChild');
         }
       } else {
@@ -45,17 +47,38 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future requestPermissionAndStartService() async {
-    var permissionsService = PermissionService();
-    bool granted = await permissionsService.askForGPSPermissions();
+    bool granted = await permissionService.askForGPSPermissions();
     if(granted) {
       var otherService = new OtherService();
       otherService.startService();
     }
   }
 
+
+
+  @override
+  void initState() {
+    super.initState();
+    print("SplashPage::initState");
+    detectWhatPageShouldSee();
+  }
+
+  @override
+  void dispose() {
+    print("SplashPage::dispose");
+    super.dispose();
+  }
+
+
+  @override
+  void deactivate() {
+    super.deactivate();
+    print("SplashPage::deactivate");
+  }
+
   @override
   Widget build(BuildContext context) {
-    this.detectWhatPageShouldSee();
+    print("SplashPage::build");
     return Scaffold(
       body: Center(
         child: ListView(
@@ -69,8 +92,4 @@ class _SplashPageState extends State<SplashPage> {
     );
   }
 
-  @override
-  void didUpdateWidget(SplashPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-  }
 }

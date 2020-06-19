@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wbudy_apka/model/LatLong.dart';
+import 'package:wbudy_apka/page/ConfigureChildPage.dart';
 import 'package:wbudy_apka/service/ChildStateService.dart';
 import 'package:wbudy_apka/service/ConfigurationService.dart';
 import 'package:wbudy_apka/service/LocationService.dart';
@@ -23,7 +24,7 @@ class _ChildStateDisplayState extends State<ChildStateDisplay> {
   double distanceToSchool;
   bool shouldBeInSchool;
   bool inSchool;
-  bool isWithoutEtui;
+  String isWithoutEtui;
   bool isPhoneHidden;
   bool isInMotion;
 
@@ -35,14 +36,22 @@ class _ChildStateDisplayState extends State<ChildStateDisplay> {
       var _distanceToSchool = double.parse(childState["distanceToSchool"])*1000;
       bool _shouldBeInSchool = (childState["shouldBeInSchool"] == "true");
       bool _inSchool = (childState["inSchool"] == "true");
-      bool _isWithoutEtui = (childState['isWithoutEtui'] == "true");
+      String _isWithoutEtui = childState['isWithoutEtui'];
       bool _isPhoneHidden = (childState['isPhoneHidden'] == "true");
       bool _isInMotion = (childState['isInMotion'] == "true");
       setState(() {
+        if(_isWithoutEtui == 'DO_NOT_HAVE_MAGNETIC' || _isWithoutEtui == 'DO_NOT_HAVE_ANY'){
+          isWithoutEtui = "Telefon nie posiada etui";
+        }
+        else if(_isWithoutEtui == 'WITH') {
+          isWithoutEtui = "Nie";
+        }
+        else if(_isWithoutEtui == 'WITHOUT') {
+          isWithoutEtui = "Tak";
+        }
         distanceToSchool = _distanceToSchool;
         shouldBeInSchool = _shouldBeInSchool;
         inSchool = _inSchool;
-        isWithoutEtui = _isWithoutEtui;
         isPhoneHidden = _isPhoneHidden;
         isInMotion = _isInMotion;
       });
@@ -68,7 +77,7 @@ class _ChildStateDisplayState extends State<ChildStateDisplay> {
         ),
         ListTile(
           title: Text("Etui zdjęte"),
-          subtitle: Text(isWithoutEtui != null ? (isWithoutEtui ? "Tak" : "Nie") : "-"),
+          subtitle: Text(isWithoutEtui != null ? (isWithoutEtui) : "-"),
         ),
         ListTile(
           title: Text("Telefon schowany"),

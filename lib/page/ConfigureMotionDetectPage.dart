@@ -58,7 +58,6 @@ class _ConfigureMotionDetectPageState extends State<ConfigureMotionDetectPage> {
                   }
                   _everySecond = Timer.periodic(Duration(seconds: 1), (Timer t) async {
                     bool _isCalibratingMotionDetect = await widget.calibrateService.isCalibratingMotionDetect();
-                    print(_isCalibratingMotionDetect);
                     setState(() {
                       startedCalibrationMotionDetectAccelerometr = _isCalibratingMotionDetect;
                     });

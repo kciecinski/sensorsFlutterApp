@@ -6,7 +6,8 @@ import 'package:wbudy_apka/page/ConfigureSchoolPage.dart';
 import 'package:wbudy_apka/page/ConfigureMotionDetectPage.dart';
 
 import 'package:wbudy_apka/page/FirstStartPage.dart';
-import 'package:wbudy_apka/page/HomePage.dart';
+import 'package:wbudy_apka/page/HomeChildPage.dart';
+import 'package:wbudy_apka/page/HomeParentPage.dart';
 import 'package:wbudy_apka/page/InfoGPSPage.dart';
 import 'package:wbudy_apka/page/SensorsPage.dart';
 import 'package:wbudy_apka/page/SplashPage.dart';
@@ -14,7 +15,7 @@ import 'package:wbudy_apka/page/SplashPage.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -25,7 +26,8 @@ class MyApp extends StatelessWidget {
       home: SplashPage(),
       routes: <String,WidgetBuilder> {
         '/splashPage': (BuildContext context) => SplashPage(),
-        '/home': (BuildContext context) => HomePage(),
+        '/homeChild': (BuildContext context) => HomeChildPage(),
+        '/homeParent': (BuildContext context) => HomeParentPage(),
         '/sensors': (BuildContext context) => SensorsPage(),
         '/firstStart': (BuildContext context) => FirstStartPage(),
         '/infoGps': (BuildContext context) => InfoGPSPage(),
@@ -33,7 +35,7 @@ class MyApp extends StatelessWidget {
         '/configureChild_school': (BuildContext context) => ConfigureSchoolPage(),
         '/configureChild_etui': (BuildContext context) => ConfigureEtuiPage(),
         '/configureChild_motionDetect': (BuildContext context) => ConfigureMotionDetectPage()
-      }
+      },
     );
   }
 }

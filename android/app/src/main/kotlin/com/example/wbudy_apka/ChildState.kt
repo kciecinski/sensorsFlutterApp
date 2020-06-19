@@ -14,6 +14,16 @@ import com.example.wbudy_apka.model.LatLong
 import com.example.wbudy_apka.model.TimeOfDay
 
 class ChildState(private var context: Context) : PositionListener, SensorEventListener {
+    enum class WithoutEtuiStates(var asStr: String) {
+        WITH("WITH"),
+        WITHOUT("WITHOUT"),
+        DO_NOT_HAVE_MAGNETIC("DO_NOT_HAVE_MAGNETIC"),
+        DO_NOT_HAVE_ANY("DO_NOT_HAVE_ANY");
+
+        override fun toString(): String {
+            return this.asStr;
+        }
+    }
     private var sensorManager: SensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     private var configuration: Configuration = Configuration(context)
     private var lastPosition: LatLong = LatLong(0.0,0.0)
@@ -34,8 +44,17 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
     fun isInSchool(): Boolean {
         return getDistanceToSchool() <= getRadiusCricleForCheckIsInSchool()
     }
-    fun isWithoutEtui(): Boolean {
-        return configuration.getRangeMagneticFieldLengthWithoutEtui().isInRangeInclusive(lastMagneticField.length);
+    fun isWithoutEtui(): WithoutEtuiStates {
+        if(configuration.isHaveEtui())
+        {
+            if(configuration.getRangeMagneticFieldLengthWithoutEtui().isInRangeInclusive(lastMagneticField.length)){
+                return WithoutEtuiStates.WITHOUT
+            } else {
+                return WithoutEtuiStates.WITH
+            }
+        } else {
+            return WithoutEtuiStates.DO_NOT_HAVE_MAGNETIC
+        }
     }
     fun isPhoneHidden(): Boolean {
         return lastProxmity < 0.5
