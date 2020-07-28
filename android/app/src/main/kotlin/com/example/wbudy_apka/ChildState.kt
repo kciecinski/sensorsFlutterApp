@@ -12,6 +12,7 @@ import com.example.wbudy_apka.math.Quaternion
 import com.example.wbudy_apka.math.Vector3
 import com.example.wbudy_apka.model.LatLong
 import com.example.wbudy_apka.model.TimeOfDay
+import java.sql.Time
 
 class ChildState(private var context: Context) : PositionListener, SensorEventListener {
     enum class WithoutEtuiStates(var asStr: String) {
@@ -24,13 +25,36 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
             return this.asStr;
         }
     }
+
+    private lateinit var eventList: EventListAppend
     private var sensorManager: SensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     private var configuration: Configuration = Configuration(context)
-    private var lastPosition: LatLong = LatLong(0.0,0.0)
-    private var lastMagneticField: Vector3 = Vector3(0.0,0.0,0.0);
-    private var lastProxmity: Double = 0.0;
-    private var lastAcceleration: Vector3 = Vector3(0.0,0.0,0.0);
-    private var lastRotation: Vector3 = Vector3(0.0,0.0,0.0);
+
+    private var _lastPosition: LatLong = LatLong(0.0,0.0)
+    private var lastPosition: LatLong
+    get() { return _lastPosition }
+    set(value) { _lastPosition = value; dumpEvent()}
+
+    private var _lastMagneticField: Vector3 = Vector3(0.0,0.0,0.0);
+    private var lastMagneticField: Vector3
+    get() { return _lastMagneticField }
+    set(value) { _lastMagneticField = value; dumpEvent()}
+
+    private var _lastProxmity: Double = 0.0;
+    private var lastProxmity: Double
+    get() { return _lastProxmity }
+    set(value) { _lastProxmity = value; dumpEvent()}
+
+    private var _lastAcceleration: Vector3 = Vector3(0.0,0.0,0.0);
+    private var lastAcceleration: Vector3
+    get() { return _lastAcceleration}
+    set(value) { _lastAcceleration = value; dumpEvent()}
+
+    private var _lastRotation: Vector3 = Vector3(0.0,0.0,0.0);
+    private var lastRotation: Vector3
+    get() { return _lastRotation}
+    set(value) { _lastRotation = value; dumpEvent()}
+
     fun getRadiusCricleForCheckIsInSchool(): Double {
         return 100.0/1000;
     }
@@ -63,6 +87,10 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
         val inMotionAcceleration = !configuration.getRangeAccelerationWithoutMotion().isInRangeInclusive(lastAcceleration.length)
         val inMotionGyro = !configuration.getRangeRotationWithoutMotion().isInRangeInclusive(lastRotation.length)
         return inMotionAcceleration || inMotionGyro
+    }
+
+    fun dumpEvent() {
+        eventList.appendEvent(Event(System.currentTimeMillis(),isWithoutEtui(),getDistanceToSchool(),isInSchool(),isShouldBeInSchool(),isPhoneHidden(),isInMotion()))
     }
 
     /**
@@ -101,6 +129,7 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
     }
 
     fun start() {
+        eventList = EventListAppend(context)
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL)
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_NORMAL)
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED), SensorManager.SENSOR_DELAY_NORMAL)

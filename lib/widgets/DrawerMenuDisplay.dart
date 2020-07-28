@@ -37,6 +37,12 @@ class _DrawerMenuDisplayState extends State<DrawerMenuDisplay> {
           }
       ),
       ListTile(
+          title: Text("Lista zdarzeń"),
+          onTap: () {
+            Navigator.pushNamed(context, '/log');
+          }
+      ),
+      ListTile(
           title: Text("Zamknij aplikację i procesy w tle"),
           onTap: () {
             _otherService.stopService();
