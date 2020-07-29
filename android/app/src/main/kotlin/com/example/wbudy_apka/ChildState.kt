@@ -6,13 +6,13 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.util.Log
+import com.example.wbudy_apka.event.Event
+import com.example.wbudy_apka.event.EventRepository
 import com.example.wbudy_apka.location.Position
 import com.example.wbudy_apka.location.PositionListener
-import com.example.wbudy_apka.math.Quaternion
 import com.example.wbudy_apka.math.Vector3
 import com.example.wbudy_apka.model.LatLong
 import com.example.wbudy_apka.model.TimeOfDay
-import java.sql.Time
 
 class ChildState(private var context: Context) : PositionListener, SensorEventListener {
     enum class WithoutEtuiStates(var asStr: String) {
@@ -26,7 +26,7 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
         }
     }
 
-    private lateinit var eventList: EventListAppend
+    private lateinit var eventRepository: EventRepository
     private var sensorManager: SensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     private var configuration: Configuration = Configuration(context)
 
@@ -90,7 +90,7 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
     }
 
     fun dumpEvent() {
-        eventList.appendEvent(Event(System.currentTimeMillis(),isWithoutEtui(),getDistanceToSchool(),isInSchool(),isShouldBeInSchool(),isPhoneHidden(),isInMotion()))
+        eventRepository.appendEvent(Event(System.currentTimeMillis(),isWithoutEtui(),getDistanceToSchool(),isInSchool(),isShouldBeInSchool(),isPhoneHidden(),isInMotion()))
     }
 
     /**
@@ -129,7 +129,7 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
     }
 
     fun start() {
-        eventList = EventListAppend(context)
+        eventRepository = EventRepository(context)
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL)
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_NORMAL)
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED), SensorManager.SENSOR_DELAY_NORMAL)
