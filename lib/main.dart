@@ -4,6 +4,7 @@ import 'package:wbudy_apka/page/ConfigureEtuiPage.dart';
 import 'package:wbudy_apka/page/ConfigureChildPage.dart';
 import 'package:wbudy_apka/page/ConfigureSchoolPage.dart';
 import 'package:wbudy_apka/page/ConfigureMotionDetectPage.dart';
+import 'package:wbudy_apka/page/EventListPage.dart';
 
 import 'package:wbudy_apka/page/FirstStartPage.dart';
 import 'package:wbudy_apka/page/HomeChildPage.dart';
@@ -34,7 +35,8 @@ class MyApp extends StatelessWidget {
         '/configureChild': (BuildContext context) => ConfigureChildPage(),
         '/configureChild_school': (BuildContext context) => ConfigureSchoolPage(),
         '/configureChild_etui': (BuildContext context) => ConfigureEtuiPage(),
-        '/configureChild_motionDetect': (BuildContext context) => ConfigureMotionDetectPage()
+        '/configureChild_motionDetect': (BuildContext context) => ConfigureMotionDetectPage(),
+        '/log': (BuildContext context) => EventListPage()
       },
     );
   }

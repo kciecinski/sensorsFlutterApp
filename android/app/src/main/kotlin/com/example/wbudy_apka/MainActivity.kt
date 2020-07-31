@@ -7,6 +7,7 @@ import android.content.ServiceConnection
 import android.os.IBinder
 import android.util.Log
 import androidx.annotation.NonNull
+import com.example.wbudy_apka.event.EventRepository
 import com.example.wbudy_apka.model.LatLong
 import com.example.wbudy_apka.model.TimeOfDay
 import io.flutter.embedding.android.FlutterActivity
@@ -20,6 +21,7 @@ class MainActivity: FlutterActivity() {
     private val OTHER_CHANNEL = "samples.flutter.dev/other"
     private val CONFIGURATION_CHANNEL = "samples.flutter.dev/configuration"
     private val CALIBRATE_CHANNEL = "samples.fultter.dev/calibrate"
+    private val EVENTLOG_CHANNEL = "samples.flutter.dev/eventlog"
 
     private lateinit var configuration: Configuration
     private lateinit var calibrate: Calibrate
@@ -38,8 +40,11 @@ class MainActivity: FlutterActivity() {
         }
     }
 
+    private lateinit var eventRepository: EventRepository
+
     override fun onStart() {
         super.onStart()
+        eventRepository = EventRepository(this.applicationContext)
         calibrate = Calibrate(this.applicationContext)
         configuration = Configuration(this.applicationContext)
         wbudyServiceIntent = Intent(this,WbudyService::class.java)
@@ -260,6 +265,31 @@ class MainActivity: FlutterActivity() {
                 }
                 else -> {
                     result.notImplemented()
+                }
+            }
+        }
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, EVENTLOG_CHANNEL).setMethodCallHandler { call, result ->
+            when (call.method) {
+                "getLastEvent" -> {
+                    result.success(eventRepository.getLastEvent().toDictionary())
+                }
+                "getNextEventById" -> {
+                    val id = call.argument<Int>("id")
+                    if(id != null) {
+                        result.success(eventRepository.getNextEventById(id.toLong()).toDictionary())
+                    }
+                }
+                "getPrevEventById" -> {
+                    val id = call.argument<Int>("id")
+                    if(id != null) {
+                        result.success(eventRepository.getPrevEventById(id.toLong()).toDictionary())
+                    }
+                }
+                "getEventById" -> {
+                    val id = call.argument<Int>("id")
+                    if(id != null) {
+                        result.success(eventRepository.getEventById(id.toLong()).toDictionary())
+                    }
                 }
             }
         }

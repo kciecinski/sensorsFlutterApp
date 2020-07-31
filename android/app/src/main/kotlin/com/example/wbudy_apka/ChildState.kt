@@ -24,6 +24,19 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
         override fun toString(): String {
             return this.asStr;
         }
+        companion object {
+            fun FromString(str: String): WithoutEtuiStates {
+                when(str) {
+                    "WITH" -> { return WithoutEtuiStates.WITH }
+                    "WITHOUT" -> { return WithoutEtuiStates.WITHOUT }
+                    "DO_NOT_HAVE_MAGNETIC" -> { return WithoutEtuiStates.DO_NOT_HAVE_MAGNETIC }
+                    "DO_NOT_HAVE_ANY" -> { return WithoutEtuiStates.DO_NOT_HAVE_ANY }
+                    else -> {
+                        return DO_NOT_HAVE_ANY
+                    }
+                }
+            }
+        }
     }
 
     private lateinit var eventRepository: EventRepository
