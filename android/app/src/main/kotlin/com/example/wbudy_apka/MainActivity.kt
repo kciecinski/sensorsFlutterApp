@@ -1,12 +1,14 @@
 package com.example.wbudy_apka
 
+import android.bluetooth.BluetoothDevice
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
-import android.util.Log
 import androidx.annotation.NonNull
+import com.example.wbudy_apka.bt.BluetoothClient
+import com.example.wbudy_apka.event.Event
 import com.example.wbudy_apka.event.EventRepository
 import com.example.wbudy_apka.model.LatLong
 import com.example.wbudy_apka.model.TimeOfDay
@@ -22,6 +24,7 @@ class MainActivity: FlutterActivity() {
     private val CONFIGURATION_CHANNEL = "samples.flutter.dev/configuration"
     private val CALIBRATE_CHANNEL = "samples.fultter.dev/calibrate"
     private val EVENTLOG_CHANNEL = "samples.flutter.dev/eventlog"
+    private val BT_CHANNEL = "samples.flutter.dev/bt"
 
     private lateinit var configuration: Configuration
     private lateinit var calibrate: Calibrate
@@ -41,10 +44,12 @@ class MainActivity: FlutterActivity() {
     }
 
     private lateinit var eventRepository: EventRepository
+    private lateinit var btClient: BluetoothClient;
 
     override fun onStart() {
         super.onStart()
         eventRepository = EventRepository(this.applicationContext)
+        btClient = BluetoothClient(this.applicationContext)
         calibrate = Calibrate(this.applicationContext)
         configuration = Configuration(this.applicationContext)
         wbudyServiceIntent = Intent(this,WbudyService::class.java)
@@ -290,6 +295,62 @@ class MainActivity: FlutterActivity() {
                     if(id != null) {
                         result.success(eventRepository.getEventById(id.toLong()).toDictionary())
                     }
+                }
+                else -> {
+                    result.notImplemented()
+                }
+            }
+        }
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger,BT_CHANNEL).setMethodCallHandler { call, result ->
+            when(call.method) {
+                "getDevices" -> {
+                    var devices = HashMap<String,String>()
+                    btClient.pairedDevices.forEach({t: BluetoothDevice? ->
+                        if (t != null) {
+                            devices.put(t.name,t.address.toString())
+                        }
+                    })
+                    result.success(devices)
+                }
+                "getLastEvent" -> {
+                    var event = Event.invalidEvent;
+                    val addres = call.argument<String>("addres")
+                    if(addres != null){
+                        val device = btClient.getDeviceByAddres(addres);
+                        if(device != null) {
+                            event = btClient.getLastEvent(device)
+                        }
+                    }
+                    result.success(event.toDictionary())
+                }
+                "getNextEvent" -> {
+                    var event = Event.invalidEvent;
+                    val addres = call.argument<String>("addres")
+                    val _tempId = call.argument<Int>("id")
+                    if(addres != null && _tempId != null){
+                        val id: Long = _tempId.toLong()
+                        val device = btClient.getDeviceByAddres(addres);
+                        if(device != null) {
+                            event = btClient.getNextEvent(device,id)
+                        }
+                    }
+                    result.success(event.toDictionary())
+                }
+                "getPrevEvent" -> {
+                    var event = Event.invalidEvent;
+                    val addres = call.argument<String>("addres")
+                    val _tempId = call.argument<Int>("id")
+                    if(addres != null && _tempId != null){
+                        val id: Long = _tempId.toLong()
+                        val device = btClient.getDeviceByAddres(addres);
+                        if(device != null) {
+                            event = btClient.getPrevEvent(device,id)
+                        }
+                    }
+                    result.success(event.toDictionary())
+                }
+                else -> {
+                    result.notImplemented()
                 }
             }
         }

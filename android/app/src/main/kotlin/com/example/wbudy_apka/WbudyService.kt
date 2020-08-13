@@ -7,6 +7,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import com.example.wbudy_apka.bt.BluetoothServer
 import io.flutter.Log
 
 class WbudyService : Service() {
@@ -15,6 +16,8 @@ class WbudyService : Service() {
         private const val LOG_TAG = "WbudyService"
     }
     private lateinit var binder: Binder
+    //For bluetooth
+    private lateinit var bluetoothServer: BluetoothServer
     //For location
     private lateinit var _location: com.example.wbudy_apka.Location
     val location: com.example.wbudy_apka.Location
@@ -40,9 +43,12 @@ class WbudyService : Service() {
         //For sensors
         _sensors = Sensors(applicationContext)
         _sensors.start()
+        bluetoothServer = BluetoothServer(applicationContext);
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        bluetoothServer.start();
+
         childState.start()
         location.start()
         sensors.start()
@@ -52,9 +58,11 @@ class WbudyService : Service() {
     }
 
     override fun onDestroy() {
+        bluetoothServer.interrupt()
         childState.stop()
         location.stop()
         sensors.stop()
+        bluetoothServer.join()
         super.onDestroy()
     }
 

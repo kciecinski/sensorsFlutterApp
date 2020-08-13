@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wbudy_apka/model/Event.dart';
 import 'package:wbudy_apka/service/EventLogService.dart';
+import 'package:wbudy_apka/widgets/EventDisplay.dart';
 
 class _EventListPageState extends State<EventListPage> {
   //Timer _everySecond;
@@ -40,7 +41,7 @@ class _EventListPageState extends State<EventListPage> {
     id = events.first.id;
     var widgetList = List<Widget>();
     events.forEach((event) {
-      widgetList.add(createWidgetForEvent(event));
+      widgetList.add(EventDisplay(event: event));
     });
     setState(() {
       eventsWidget = widgetList;

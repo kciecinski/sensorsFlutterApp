@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.provider.BaseColumns
 
 class EventRepositoryHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+
     companion object {
         // If you change the database schema, you must increment the database version.
         const val DATABASE_VERSION = 1

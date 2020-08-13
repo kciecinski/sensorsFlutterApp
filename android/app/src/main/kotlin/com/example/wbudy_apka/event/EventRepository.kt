@@ -8,16 +8,17 @@ import java.io.OutputStreamWriter
 
 
 class EventRepository(private var context: Context) {
-    private val EventListFileName = "eventlist.txt"
+    fun deleteOld() {
+        val dbHelper = EventRepositoryHelper(context)
+        val db = dbHelper.writableDatabase
+        val lastEventId = getLastEvent().id
+        val deleteToId = lastEventId - 200;
+        db.execSQL("DELETE FROM ${EventRepositoryEntry.TABLE_NAME} WHERE ${BaseColumns._ID} < ${deleteToId}")
+        db.close()
+        dbHelper.close()
+    }
     private var lastEvent: Event? = null
     private var first = true
-    private fun appendEventFile(event: Event) {
-        var fileOutputStream= context.openFileOutput(EventListFileName,Context.MODE_APPEND)
-        var outputStreamWriter = OutputStreamWriter(fileOutputStream)
-        outputStreamWriter.appendln(event.toString())
-        outputStreamWriter.close()
-        fileOutputStream.close()
-    }
     fun appendEvent(event: Event) {
         var ok = false
         if(first) {
@@ -39,7 +40,7 @@ class EventRepository(private var context: Context) {
         val dbHelper = EventRepositoryHelper(context)
         val db = dbHelper.writableDatabase
 
-        var result = db.rawQuery("SELECT MIN(${BaseColumns._ID}) FROM ${EventRepositoryEntry.TABLE_NAME} WHRERE ${BaseColumns._ID} > ${id}", null)
+        var result = db.rawQuery("SELECT MIN(${BaseColumns._ID}) FROM ${EventRepositoryEntry.TABLE_NAME} WHERE ${BaseColumns._ID} > ${id}", null)
         result.moveToLast()
         val id = result.getLong(0)
         result.close()
@@ -51,7 +52,7 @@ class EventRepository(private var context: Context) {
         val dbHelper = EventRepositoryHelper(context)
         val db = dbHelper.writableDatabase
 
-        var result = db.rawQuery("SELECT MAX(${BaseColumns._ID}) FROM ${EventRepositoryEntry.TABLE_NAME} WHRERE ${BaseColumns._ID} < ${id}", null)
+        var result = db.rawQuery("SELECT MAX(${BaseColumns._ID}) FROM ${EventRepositoryEntry.TABLE_NAME} WHERE ${BaseColumns._ID} < ${id}", null)
         result.moveToLast()
         val id = result.getLong(0)
         result.close()
@@ -85,11 +86,11 @@ class EventRepository(private var context: Context) {
                 EventRepositoryEntry.COLUMN_IS_IN_SCHOOL)
         val selection = "${BaseColumns._ID} = ?"
         val selectionArgs = arrayOf(id.toString())
-        val sortOrder = "${EventRepositoryEntry.COLUMN_TIMESTAMP} ASC"
+        val sortOrder = "${BaseColumns._ID} ASC"
 
         val result = db.query(EventRepositoryEntry.TABLE_NAME,projection,selection,selectionArgs,null,null,sortOrder)
         if(result.count < 1) {
-            val event = Event(0,ChildState.WithoutEtuiStates.DO_NOT_HAVE_ANY,0.0,false,false,false,false,-2)
+            val event = Event.invalidEvent
             result.close()
             db.close()
             dbHelper.close()

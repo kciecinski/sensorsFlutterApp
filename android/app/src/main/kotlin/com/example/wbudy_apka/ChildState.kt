@@ -13,6 +13,7 @@ import com.example.wbudy_apka.location.PositionListener
 import com.example.wbudy_apka.math.Vector3
 import com.example.wbudy_apka.model.LatLong
 import com.example.wbudy_apka.model.TimeOfDay
+import java.lang.Exception
 
 class ChildState(private var context: Context) : PositionListener, SensorEventListener {
     enum class WithoutEtuiStates(var asStr: String) {
@@ -103,7 +104,11 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
     }
 
     fun dumpEvent() {
-        eventRepository.appendEvent(Event(System.currentTimeMillis(),isWithoutEtui(),getDistanceToSchool(),isInSchool(),isShouldBeInSchool(),isPhoneHidden(),isInMotion()))
+        try {
+            eventRepository.appendEvent(Event(System.currentTimeMillis(),isWithoutEtui(),getDistanceToSchool(),isInSchool(),isShouldBeInSchool(),isPhoneHidden(),isInMotion()))
+        } catch (e: Exception) {
+            null
+        }
     }
 
     /**
@@ -143,6 +148,7 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
 
     fun start() {
         eventRepository = EventRepository(context)
+        eventRepository.deleteOld()
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL)
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_NORMAL)
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED), SensorManager.SENSOR_DELAY_NORMAL)

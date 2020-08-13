@@ -12,7 +12,7 @@ class PermissionService {
   PermissionService._constructor() {}
 
   List<PermissionGroup> _gpsPermissionsList = List.of({PermissionGroup.location,PermissionGroup.locationAlways,PermissionGroup.locationWhenInUse});
-
+  List<PermissionGroup> _btPermissionsList = List.of({});
   Future<bool> askForPermissions(List<PermissionGroup> listPermissions) async {
     bool granted = true;
     var permissions = await PermissionHandler().requestPermissions(listPermissions);
@@ -26,5 +26,8 @@ class PermissionService {
 
   Future<bool> askForGPSPermissions() async {
     return askForPermissions(_gpsPermissionsList);
+  }
+  Future<bool> askForBtPermissions() async {
+    return askForPermissions(_btPermissionsList);
   }
 }
