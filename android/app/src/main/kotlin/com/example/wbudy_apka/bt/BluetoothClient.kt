@@ -28,7 +28,7 @@ class BluetoothClient(private var context: Context) {
         android.util.Log.i("BT Client", "sent $msg")
     }
     fun recvMessage(socket: BluetoothSocket): BluetoothMessageFactory.BluetoothMessage {
-        var header: ByteArray = ByteArray(1,init = { t -> BluetoothMessageType.FAKE_MESSAGE})
+        var header: ByteArray = ByteArray(1,init = { _ -> BluetoothMessageType.FAKE_MESSAGE})
         socket.inputStream.read(header)
         var payloadSizeBytes = BluetoothMessageFactory.shortToByteArray(0)
         if(!BluetoothMessageType.allMessageTypes.contains<Byte>(header.get(0))) {
@@ -41,7 +41,7 @@ class BluetoothClient(private var context: Context) {
         socket.inputStream.read(payloadSizeBytes)
         val payloadSize = BluetoothMessageFactory.byteArraytoShort(payloadSizeBytes)
         Log.i("recv on Client","payloadSize: $payloadSize as bytes: ${payloadSizeBytes.contentToString()}")
-        var payload: ByteArray = ByteArray(payloadSize,init = { t -> 0x00 })
+        var payload: ByteArray = ByteArray(payloadSize,init = { _ -> 0x00 })
         socket.inputStream.read(payload)
         val msg = header+payloadSizeBytes+payload
         android.util.Log.i("BT Client", "recived $msg")
@@ -121,7 +121,6 @@ class BluetoothClient(private var context: Context) {
             }
             sendMessage(socket,initMessage);
             var shouldLoop = true;
-            var event: Event
             while (shouldLoop && socket.isConnected) {
                 var recivedMsg = recvMessage(socket)
                 val ret = callbackRecivedMessage(recivedMsg,socket)

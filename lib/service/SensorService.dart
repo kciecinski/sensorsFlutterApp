@@ -1,8 +1,5 @@
-import 'dart:collection';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:wbudy_apka/service/OtherService.dart';
 
 class SensorService {
   static SensorService _instance = null;
@@ -14,7 +11,7 @@ class SensorService {
     return _instance;
   }
 
-  SensorService._constructor() {}
+  SensorService._constructor();
 
   List<Map> _sensorsInfo = [
     {"Name": "Gyroscope", "Method": "getGyroscopeValues"},

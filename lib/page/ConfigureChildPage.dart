@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:wbudy_apka/service/ConfigurationService.dart';
 import 'package:wbudy_apka/service/OtherService.dart';
 import 'package:wbudy_apka/service/PermissionService.dart';
@@ -48,7 +47,7 @@ class _ConfigureChildPageState extends State<ConfigureChildPage> with WidgetsBin
   var configuredAll = false;
   var configuredEtui = false;
   var configuredSchool = false;
-  var configuredMotionDetector = false;//TODO: add ask for value
+  var configuredMotionDetector = false;
 
   @override
   void dispose() {

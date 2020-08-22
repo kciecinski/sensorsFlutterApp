@@ -6,7 +6,7 @@ import 'package:wbudy_apka/service/ConfigurationService.dart';
 import 'package:wbudy_apka/service/LocationService.dart';
 
 class ChildStateService {
-  static ChildStateService _instance = null;
+  static ChildStateService _instance;
 
   factory ChildStateService() {
     if (_instance == null) {
@@ -16,7 +16,7 @@ class ChildStateService {
   }
   ConfigurationService _configurationService = ConfigurationService();
   LocationService _locationService = LocationService();
-  ChildStateService._constructor() {}
+  ChildStateService._constructor();
   static const String _getChildStateMethod = "getChildState";
   static const MethodChannel _platform = const MethodChannel('samples.flutter.dev/other');
 

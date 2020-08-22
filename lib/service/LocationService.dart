@@ -14,11 +14,9 @@ class LocationService {
     }
     return _instance;
   }
-  LocationService._constructor() {}
+  LocationService._constructor();
   OtherService _otherService = OtherService();
-  static const String _isAvailableMethod = "isAvailable";
   static const String _getPositionMethod = "getPosition";
-  static const String _startGpsMethod = "startGps";
   static const String _isNMEAWorksMethod = "isNMEAWorks";
   static const MethodChannel _platform = const MethodChannel('samples.flutter.dev/gps');
 

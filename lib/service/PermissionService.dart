@@ -9,7 +9,7 @@ class PermissionService {
     }
     return _instance;
   }
-  PermissionService._constructor() {}
+  PermissionService._constructor();
 
   List<PermissionGroup> _gpsPermissionsList = List.of({PermissionGroup.location,PermissionGroup.locationAlways,PermissionGroup.locationWhenInUse});
   List<PermissionGroup> _btPermissionsList = List.of({});

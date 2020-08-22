@@ -68,7 +68,7 @@ class BluetoothServerClientThread(private var context: Context, private var sock
         Log.i("BT Server", "sent $msg")
     }
     fun recvMessage(): BluetoothMessageFactory.BluetoothMessage {
-        var header: ByteArray = ByteArray(1,init = { t -> BluetoothMessageType.FAKE_MESSAGE})
+        var header: ByteArray = ByteArray(1,init = { _ -> BluetoothMessageType.FAKE_MESSAGE})
         socket.inputStream.read(header)
         var payloadSizeBytes = BluetoothMessageFactory.shortToByteArray(0)
         if(!BluetoothMessageType.allMessageTypes.contains<Byte>(header.get(0))) {
@@ -80,7 +80,7 @@ class BluetoothServerClientThread(private var context: Context, private var sock
         }
         socket.inputStream.read(payloadSizeBytes)
         val payloadSize = BluetoothMessageFactory.byteArraytoShort(payloadSizeBytes)
-        var payload: ByteArray = ByteArray(payloadSize,init = { t -> 0x00 })
+        var payload: ByteArray = ByteArray(payloadSize,init = { _ -> 0x00 })
         socket.inputStream.read(payload)
         val msg = header+payloadSizeBytes+payload
         android.util.Log.i("BT Server", "recived $msg")

@@ -1,12 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:wbudy_apka/model/LatLong.dart';
-import 'package:wbudy_apka/page/ConfigureChildPage.dart';
 import 'package:wbudy_apka/service/ChildStateService.dart';
-import 'package:wbudy_apka/service/ConfigurationService.dart';
-import 'package:wbudy_apka/service/LocationService.dart';
 
 class ChildStateDisplay extends StatefulWidget{
   ChildStateDisplay();
@@ -19,8 +14,6 @@ class ChildStateDisplay extends StatefulWidget{
 class _ChildStateDisplayState extends State<ChildStateDisplay> {
   Timer _everySecond;
   ChildStateService _childStateService = ChildStateService();
-  LocationService _locationService = LocationService();
-  ConfigurationService _configurationService = ConfigurationService();
   double distanceToSchool;
   bool shouldBeInSchool;
   bool inSchool;

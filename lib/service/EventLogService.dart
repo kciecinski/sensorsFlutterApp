@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:collection';
-import 'dart:ffi';
 
 import 'package:wbudy_apka/model/Event.dart';
 
@@ -15,7 +12,7 @@ class EventLogService {
     return _instance;
   }
 
-  EventLogService._constructor() {}
+  EventLogService._constructor();
   static const MethodChannel _platform = const MethodChannel('samples.flutter.dev/eventlog');
   static const _getLastEvent = "getLastEvent";
   static const _getNextEventById = "getNextEventById";

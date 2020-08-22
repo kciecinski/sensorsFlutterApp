@@ -17,7 +17,7 @@ class BtService {
     return _instance;
   }
 
-  BtService._constructor() {}
+  BtService._constructor();
   static const _getDevices = "getDevices";
   static const _getLastEvent = "getLastEvent";
   static const _getNextEvent = "getNextEvent";
@@ -63,7 +63,7 @@ class BtService {
   Future getPrevEvent() async {
     _isBtInUsage = true;
     var id = -2;
-    if(listEvent.length > 0) {
+    if(listEvent.isNotEmpty) {
       id = listEvent.first.id;
     }
     var result = await _platform.invokeMethod(_getPrevEvent,{"addres":usedDevice.addres,"id":id});
@@ -74,7 +74,7 @@ class BtService {
   Future getNextEvent() async {
     _isBtInUsage = true;
     var id = -2;
-    if(listEvent.length > 0) {
+    if(listEvent.isNotEmpty) {
       id = listEvent.last.id;
     }
     var result = await _platform.invokeMethod(_getNextEvent,{"addres":usedDevice.addres,"id":id});

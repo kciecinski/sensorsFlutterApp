@@ -32,8 +32,6 @@ class Event(var timestamp: Long, var isWithoutEtui: ChildState.WithoutEtuiStates
             else return false
         }
         fun fromJsonString(jsonString: String): Event {
-            //{"timestamp":1596795999217, "isWithoutEtui":"DO_NOT_HAVE_MAGNETIC", "distanceToSchool":1.1198884348447922,
-            //"isInSchool":"false", "isShouldBeInSchool":"true", "isPhoneHidden":"false", "isInMotion":"false", "id": "12171"}
             val jsonObject = JSONObject(jsonString);
             return Event(
                     jsonObject.getLong("timestamp"),

@@ -11,7 +11,7 @@ class CalibrateService {
     return _instance;
   }
 
-  CalibrateService._constructor() {}
+  CalibrateService._constructor();
   static const String _startCalibrateWithoutEtuiMethod = "startCalibrateWithoutEtui";
   static const String _isCalibratingWithoutEtuiMethod = "isCalibratingWithoutEtui";
   static const String _startCalibrateMotionDetectMethod = "startCalibrateMotionDetect";

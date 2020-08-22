@@ -1,6 +1,5 @@
 import 'dart:collection';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:nominatim_location_picker/nominatim_location_picker.dart';
 import 'package:wbudy_apka/model/LatLong.dart';
 import 'package:wbudy_apka/service/ConfigurationService.dart';

@@ -14,8 +14,6 @@ class LatLong
     var dlong = degreesToRadians(other.longtitude-this.longtitude);
     var lat1 = degreesToRadians(other.latitude);
     var lat2 = degreesToRadians(this.latitude);
-    var long1 = degreesToRadians(other.longtitude);
-    var long2 = degreesToRadians(this.latitude);
     var a = 0.5 - cos(dlat)/2 + cos(lat1)*cos(lat2)*(1-cos(dlong))/2;
     return asin(sqrt(a))*12742;
   }

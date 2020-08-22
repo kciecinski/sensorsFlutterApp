@@ -1,28 +1,10 @@
-import 'dart:async';
-import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:wbudy_apka/model/Event.dart';
 import 'package:wbudy_apka/service/EventLogService.dart';
 import 'package:wbudy_apka/widgets/EventDisplay.dart';
 
 class _EventListPageState extends State<EventListPage> {
-  //Timer _everySecond;
-
-  /*@override
-  void initState() {
-    super.initState();
-    HashMap result = {};
-    _everySecond = Timer.periodic(Duration(seconds: 1), (Timer t) async {
-      try {
-        result = await widget.eventLogService.getLastEvent();
-        print(result);
-      } on PlatformException catch (e) {
-        print(e);
-      }
-    });
-  }*/
 
   int id = -1;
   List<Widget> eventsWidget = List<Widget>();
@@ -34,7 +16,7 @@ class _EventListPageState extends State<EventListPage> {
   }
 
   void displayEvents(List<Event> events) {
-    if(events.length < 1) {
+    if(events.isEmpty) {
       widget.eventLogService.getLastestEvent().then(displayEvents);
       return;
     }

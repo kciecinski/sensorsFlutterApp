@@ -11,7 +11,7 @@ class OtherService {
     return _instance;
   }
 
-  OtherService._constructor() {}
+  OtherService._constructor();
   static const String _isAvailableMethod = "isAvailable";
   static const String _startService = "startService";
   static const String _stopService = "stopService";

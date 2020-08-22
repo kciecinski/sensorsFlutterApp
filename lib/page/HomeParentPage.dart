@@ -1,7 +1,5 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:wbudy_apka/model/BtDevice.dart';
 import 'package:wbudy_apka/service/BtService.dart';
 import 'package:wbudy_apka/widgets/BtDeviceDisplay.dart';
@@ -16,17 +14,10 @@ class HomeParentPage extends StatefulWidget {
 
 class _HomeParentPageState extends State<HomeParentPage> {
 
-  Timer _everySecond;
   List<BtDevice> devices = List<BtDevice>();
   @override
   void initState() {
     super.initState();
-    _everySecond = Timer.periodic(Duration(seconds: 1), (Timer t) async {
-      var _devices = await widget.btService.getDevices();
-      setState(() {
-        devices = _devices;
-      });
-    });
   }
   @override
   Widget build(BuildContext context) {

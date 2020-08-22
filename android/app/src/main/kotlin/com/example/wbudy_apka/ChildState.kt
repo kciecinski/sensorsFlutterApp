@@ -133,10 +133,6 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
             Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED -> {
                 lastMagneticField = Vector3(event.values[0].toDouble(),event.values[1].toDouble(),event.values[2].toDouble())
             }
-            Sensor.TYPE_LIGHT -> {
-                //Log.i("TYPE_LIGHT", event.values.size.toString())
-                //Log.i("TYPE_LIGHT",event.values.contentToString())
-            }
             Sensor.TYPE_PROXIMITY -> {
                 lastProxmity = event.values[0].toDouble();
             }
@@ -152,7 +148,6 @@ class ChildState(private var context: Context) : PositionListener, SensorEventLi
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL)
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_NORMAL)
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED), SensorManager.SENSOR_DELAY_NORMAL)
-        //sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT), SensorManager.SENSOR_DELAY_NORMAL)
         sensorManager.registerListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY),SensorManager.SENSOR_DELAY_NORMAL)
     }
     fun stop() {

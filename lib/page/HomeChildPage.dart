@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:wbudy_apka/service/LocationService.dart';
 import 'package:wbudy_apka/service/OtherService.dart';
 import 'package:wbudy_apka/service/PermissionService.dart';
 import 'package:wbudy_apka/widgets/ChildStateDisplay.dart';
