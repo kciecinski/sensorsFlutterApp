@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="wbudy_apka"
+        android:label="ChildTracker"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
